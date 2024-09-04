@@ -9,3 +9,10 @@ const apiHost = {
 export const api = axios.create({
   baseURL: apiHost
 })
+
+
+
+
+export const batchCheckFileIncluded = (path: string) => {
+
+}
