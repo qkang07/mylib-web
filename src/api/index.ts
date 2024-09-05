@@ -12,7 +12,3 @@ export const api = axios.create({
 
 
 
-
-export const batchCheckFileIncluded = (path: string) => {
-
-}
