@@ -1,4 +1,4 @@
-import { Button, Input, Table } from '@douyinfe/semi-ui'
+import { Button, Input, List, Table } from '@douyinfe/semi-ui'
 import { IconFile, IconFolder } from '@douyinfe/semi-icons'
 import { useRequest } from 'ahooks'
 import React, { useState } from 'react'
@@ -12,7 +12,7 @@ type PathInfo = {
 
 type Props = {}
 
-const index = (props: Props) => {
+const Index = (props: Props) => {
 
   const [path, setPath] = useState('')
 
@@ -51,6 +51,7 @@ const index = (props: Props) => {
               }
             }
           }}
+          
         dataSource={data} columns={[
           {
             title: '',
@@ -86,4 +87,4 @@ const index = (props: Props) => {
   )
 }
 
-export default index
+export default Index
