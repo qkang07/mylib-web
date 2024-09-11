@@ -1,13 +1,15 @@
-import { Button, Input, List, Table } from '@douyinfe/semi-ui'
-import { IconFile, IconFolder } from '@douyinfe/semi-icons'
+import { Button, ButtonGroup, Input, List, Table } from '@douyinfe/semi-ui'
+import { IconCheckCircleStroked, IconFile, IconFolder, IconPlus } from '@douyinfe/semi-icons'
 import { useRequest } from 'ahooks'
 import React, { useState } from 'react'
 import { api } from '../../api'
+import styles from './index.module.scss'
 
 type PathInfo = {
   Name: string
   IsDir: boolean
   Size?: number
+  Exist?: boolean
 }
 
 type Props = {}
@@ -40,7 +42,17 @@ const Index = (props: Props) => {
       <div>
         <Input value={path}  />
       </div>
-      <div>
+      <div className={styles.pathList}>
+        {data?.map(item => {
+          return <div key={item.Name} className={styles.pathItem}>
+            <div>{item.Name}</div>
+            <div>
+              
+              {item.Exist ? <IconCheckCircleStroked/> : <Button icon={<IconPlus/>} type='primary' >收录</Button> }
+            </div>
+          </div>
+        })}
+
         <Table
           onRow={(record, index) => {
             return {
