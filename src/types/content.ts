@@ -5,7 +5,7 @@ export type ModelBase = {
   DeletedAt?: string
 }
 
-export type Content = {
+export type ContentModel = {
   Name: string
   Path: string 
   Size: string
@@ -27,5 +27,11 @@ export type AttrSchema = {
   Name: string
   Label: string
   DataType: 'number' | 'string'
+  // RefColl: number
+  // RefCollProp: string
 
 }
+
+export type AttrModel = {
+  Value: string
+} & AttrSchema
