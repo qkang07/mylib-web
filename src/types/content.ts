@@ -13,6 +13,8 @@ export type ContentModel = {
   Content?: string
   Hash: string
   MimeType?: string
+  Unavailable?: number
+  Attrs?: AttrModel[]
 } & ModelBase
 
 export type ContentType = {
