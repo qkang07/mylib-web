@@ -14,11 +14,30 @@ type PathInfo = {
 
 type Props = {}
 
-const Index = (props: Props) => {
+const Drives = (props: Props) => {
 
   const [path, setPath] = useState('')
 
   const {data, loading, runAsync: getPathContent} = useRequest<PathInfo[], [void] >(() => {
+    return Promise.resolve([
+      {
+        Name: 'sdf',
+        IsDir: false,
+        Size: 123,
+        Exist: false
+      },
+      {
+        Name: 'exist',
+        IsDir: false,
+        Size: 123,
+        Exist: true
+      },
+      {
+        Name: 'folder',
+        IsDir: true,
+        Exist: false
+      }
+    ])
     return api.get<(string | PathInfo)[]>('/fs/path?path=' + encodeURIComponent(path)).then(res => {
       console.log(res.data)
       
@@ -54,6 +73,7 @@ const Index = (props: Props) => {
         })}
 
         <Table
+         size="small"
           onRow={(record, index) => {
             return {
               onClick() {
@@ -99,4 +119,4 @@ const Index = (props: Props) => {
   )
 }
 
-export default Index
+export default Drives

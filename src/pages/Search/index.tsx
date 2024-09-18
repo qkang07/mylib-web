@@ -31,7 +31,7 @@ type Condition = {
 type Props = {}
 
 
-const Index = (props: Props) => {
+const Search = (props: Props) => {
 
   const [conds, setConds] = useState<Condition[]>([])
 
@@ -53,4 +53,4 @@ const Index = (props: Props) => {
   )
 }
 
-export default Index
+export default Search
