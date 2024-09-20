@@ -1,9 +1,10 @@
-import { Button, ButtonGroup, Input, List, Table } from '@douyinfe/semi-ui'
+import { Button, ButtonGroup, Input, List, Popover, Table } from '@douyinfe/semi-ui'
 import { IconCheckCircleStroked, IconFile, IconFolder, IconPlus } from '@douyinfe/semi-icons'
 import { useRequest } from 'ahooks'
 import React, { useState } from 'react'
 import { api } from '../../api'
 import styles from './index.module.scss'
+import EditCard from '../../comps/EditCard'
 
 type PathInfo = {
   Name: string
@@ -59,10 +60,16 @@ const Drives = (props: Props) => {
   return (
     <div>
       <div>
-        <Input value={path}  />
+        <Input value={path}
+          prefix={
+          <span style={{padding: '6px 10px'}} >Path：</span>
+          }
+        suffix={
+          <Button>Go</Button>
+        } />
       </div>
       <div className={styles.pathList}>
-        {data?.map(item => {
+        {/* {data?.map(item => {
           return <div key={item.Name} className={styles.pathItem}>
             <div>{item.Name}</div>
             <div>
@@ -70,7 +77,7 @@ const Drives = (props: Props) => {
               {item.Exist ? <IconCheckCircleStroked/> : <Button icon={<IconPlus/>} type='primary' >收录</Button> }
             </div>
           </div>
-        })}
+        })} */}
 
         <Table
          size="small"
@@ -88,6 +95,7 @@ const Drives = (props: Props) => {
           {
             title: '',
             dataIndex: 'IsDir',
+            width: 40,
             render(text, record, index) {
               if(record.IsDir) {
                 return <IconFolder />
@@ -108,7 +116,18 @@ const Drives = (props: Props) => {
             title: 'Actions',
             render(_, record, index) {
               return <div>
-                <Button></Button>
+                {
+                  record.Exist ? <span>
+                    <IconCheckCircleStroked/> 已收录
+                  </span> : <Button size='small' icon={<IconPlus/>} onClick={e => {
+                  e.stopPropagation()
+                }} >收录</Button>
+                }
+                <Popover content={<EditCard content={record} />}>
+
+                  <Button size='small' >Attrs</Button>
+                </Popover>
+                
               </div>
             }
           }

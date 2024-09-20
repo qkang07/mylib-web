@@ -7,7 +7,7 @@ type Props = {
   attrs: AttrModel[]
 }
 
-const index = (props: Props) => {
+const EditCard = (props: Props) => {
   const {content, attrs} = props
   return (
     <div>
@@ -41,4 +41,4 @@ const index = (props: Props) => {
   )
 }
 
-export default index
+export default EditCard
