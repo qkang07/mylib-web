@@ -4,7 +4,7 @@ import { AttrModel, ContentModel } from '../../types/content'
 
 type Props = {
   content: ContentModel
-  attrs: AttrModel[]
+  attrs?: AttrModel[]
 }
 
 const EditCard = (props: Props) => {

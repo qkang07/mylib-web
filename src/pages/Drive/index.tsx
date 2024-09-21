@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Input, List, Popover, Table } from '@douyinfe/semi-ui'
+import { Button, ButtonGroup, Input, List, Popover, Space, Table } from '@douyinfe/semi-ui'
 import { IconCheckCircleStroked, IconFile, IconFolder, IconPlus } from '@douyinfe/semi-icons'
 import { useRequest } from 'ahooks'
 import React, { useState } from 'react'
@@ -6,7 +6,7 @@ import { api } from '../../api'
 import styles from './index.module.scss'
 import EditCard from '../../comps/EditCard'
 
-type PathInfo = {
+export type PathInfo = {
   Name: string
   IsDir: boolean
   Size?: number
@@ -115,20 +115,21 @@ const Drives = (props: Props) => {
           {
             title: 'Actions',
             render(_, record, index) {
-              return <div>
+              return <Space>
+                <Popover content={<EditCard content={record} />}>
                 {
-                  record.Exist ? <span>
-                    <IconCheckCircleStroked/> 已收录
-                  </span> : <Button size='small' icon={<IconPlus/>} onClick={e => {
+                  record.Exist ? <Button size='small' icon={<IconCheckCircleStroked/>} onClick={e => {
+                    e.stopPropagation()
+                  }}>
+                     已收录
+                  </Button> : <Button size='small' theme='solid' icon={<IconPlus/>} onClick={e => {
                   e.stopPropagation()
                 }} >收录</Button>
                 }
-                <Popover content={<EditCard content={record} />}>
 
-                  <Button size='small' >Attrs</Button>
                 </Popover>
                 
-              </div>
+              </Space>
             }
           }
         ]}  ></Table>
