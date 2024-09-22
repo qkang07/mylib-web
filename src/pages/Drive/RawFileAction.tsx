@@ -14,17 +14,21 @@ const RawFileAction = (props: Props) => {
   const file = props.file
   const [popVisible, setPopVisible] = useState(false)
   const {runAsync: doAdd, loading: addLoading, data: content } = useRequest(() => {
-    return api.post('/content/add', file)
+    return api.post('/content/add', file).then((res) => {
+      setPopVisible(true)
+      return res.data
+    })
   })
 
   return (
-    <Popover content={<EditCard content={content} />} visible={popVisible} onClickOutSide={() => {
+    <Popover  content={<EditCard content={content} />} visible={popVisible} onClickOutSide={() => {
       setPopVisible(false)
     }}>
 
 {
           file.Exist ? <Button size='small' icon={<IconCheckCircleStroked/>} onClick={e => {
             e.stopPropagation()
+            setPopVisible(true)
           }}>
               已收录
           </Button> : <Button size='small' theme='solid' icon={<IconPlus/>} onClick={e => {
