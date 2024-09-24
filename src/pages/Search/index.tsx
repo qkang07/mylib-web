@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
 import styles from './index.module.scss'
-import { Input, Select, Table } from '@douyinfe/semi-ui'
+import { Button, Descriptions, Input, Popover, Select, Space, Table } from '@douyinfe/semi-ui'
+import { ColumnProps } from '@douyinfe/semi-ui/lib/es/table'
+import EditCard from '../../comps/EditCard'
 
 
 type Operator = 'eq' | 'lt' |'gt'|'le'|'ge'|'not'|'in'|'notin'|'between'
@@ -35,6 +37,38 @@ const Search = (props: Props) => {
 
   const [conds, setConds] = useState<Condition[]>([])
 
+  const columns: ColumnProps[] = [
+    {
+      title: 'Name',
+      dataIndex: 'Name'
+    },
+    {
+      title: 'Size',
+      dataIndex: 'Size'
+    },
+    {
+      title: 'Type',
+      dataIndex: 'Type'
+    },
+    {
+      title: 'Actions',
+      render(_, row, index) {
+        return <Space>
+          <Popover content={<div>
+            <Descriptions></Descriptions>
+          </div>}>
+            <Button onClick={e => {
+              e.stopPropagation()
+            }}>Info</Button>
+          </Popover>
+          <Popover content={<EditCard content={row} />}>
+            <Button>Attrs</Button>
+          </Popover>
+        </Space>
+      }
+    }
+  ]
+
   return (
     <div>
       <div className={styles.conditions}>
@@ -47,7 +81,7 @@ const Search = (props: Props) => {
         })}
       </div>
       <div className={styles.result} >
-      
+        <Table   ></Table>
       </div>
     </div>
   )

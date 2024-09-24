@@ -1,4 +1,6 @@
 import { ArrayField, Button, Descriptions, Form, Modal, Space } from '@douyinfe/semi-ui'
+import { IconCheckCircleStroked, IconFile, IconFolder, IconMinus, IconPlus } from '@douyinfe/semi-icons'
+
 import React, { useRef } from 'react'
 import { AttrModel, ContentModel } from '../../types/content'
 import { useRequest } from 'ahooks'
@@ -7,12 +9,11 @@ import { FormApi } from '@douyinfe/semi-ui/lib/es/form'
 
 type Props = {
   content: ContentModel
-  attrs?: AttrModel[]
   onFinish?: (res?: ContentModel) => void
 }
 
 const EditCard = (props: Props) => {
-  const {content, attrs} = props
+  const {content} = props
   const formApi = useRef<FormApi>() 
 
   const {runAsync: saveAttrs, loading: saveLoading} = useRequest(() => {
@@ -37,23 +38,21 @@ const EditCard = (props: Props) => {
           {content.Size}
         </Form.Slot>
         {/* <Form.Input label="" ></Form.Input> */}
-        <ArrayField>
+        <ArrayField field='Attrs'>
           {({add, arrayFields}) => {
-            arrayFields.map(item => {
-              return <div key={item.key}>
-                
-              </div>
+            return arrayFields.map(item => {
+              return <Space key={item.key}>
+                <Form.Input field={`${item.field}.Name`} placeholder={'Attr Name'} ></Form.Input>
+                <Form.Input field={`${item.field}.Value`} placeholder={'Value'} ></Form.Input>
+                <Button circle icon={<IconPlus/> } theme='borderless' onClick={() => add()} ></Button>
+                <Button circle icon={<IconMinus/> } theme='borderless' onClick={() => item.remove()} ></Button>
+              </Space>
             })
           }}
         </ArrayField>
-        {attrs.map(attr => {
-          if(attr.DataType === 'number') {
-            return <Form.InputNumber label={attr.Label} key={attr.Name} va />
-          }
-        })}
       </Form>
       <Space>
-        <Button theme='solid' onClick={() => {
+        <Button theme='solid' loading={saveLoading} onClick={() => {
           saveAttrs()
         }} >保存</Button>
         <Button onClick={() => {
