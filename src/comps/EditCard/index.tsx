@@ -34,7 +34,7 @@ const EditCard = (props: Props) => {
         <Form.Slot label="Path" >
           {content.Path}
         </Form.Slot>
-        <Form.Slot>
+        <Form.Slot label="Size">
           {content.Size}
         </Form.Slot>
         {/* <Form.Input label="" ></Form.Input> */}
