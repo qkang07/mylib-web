@@ -5,6 +5,8 @@ import React, { useState } from 'react'
 import { api } from '../../api'
 import styles from './index.module.scss'
 import EditCard from '../../comps/EditCard'
+import path from 'path-browserify'
+
 
 export type PathInfo = {
   Name: string
@@ -17,7 +19,7 @@ type Props = {}
 
 const Drives = (props: Props) => {
 
-  const [path, setPath] = useState('')
+  const [currentPath, setCurrentPath] = useState('')
 
   const {data, loading, runAsync: getPathContent} = useRequest<PathInfo[], [void] >(() => {
     // return Promise.resolve([
@@ -39,7 +41,12 @@ const Drives = (props: Props) => {
     //     Exist: false
     //   }
     // ])
-    return api.get<(string | PathInfo)[]>('/fs/path?path=' + encodeURIComponent(path)).then(res => {
+    let v = currentPath
+    if(!v.endsWith('/')){
+      v = v + '/'
+      setCurrentPath(v)
+    }
+    return api.get<(string | PathInfo)[]>('/fs/path?path=' + encodeURIComponent(v)).then(res => {
       console.log(res.data)
       
       return res.data.map(item => {
@@ -54,15 +61,20 @@ const Drives = (props: Props) => {
       })
     })
   }, {
-    refreshDeps: [path]
+    refreshDeps: []
   })
 
   return (
     <div>
       <div>
-        <Input value={path}
+        <Input value={currentPath}
           onChange={v => {
-            setPath(v)
+            
+            setCurrentPath(v)
+          }}
+          onEnterPress={() => {
+            
+            getPathContent()
           }}
           prefix={
           <span style={{padding: '6px 10px'}} >Path：</span>
@@ -85,12 +97,17 @@ const Drives = (props: Props) => {
         })} */}
 
         <Table
+          pagination={false}
          size="small"
           onRow={(record, index) => {
             return {
               onClick() {
                 if(record.IsDir) {
-                  setPath(path + '/' + record.Name)
+
+                  setCurrentPath(path.join(currentPath, record.Name) + '/')
+                  setTimeout(() => {
+                    getPathContent()
+                  }, 0);
                 }
               }
             }

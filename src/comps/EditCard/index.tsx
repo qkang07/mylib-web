@@ -6,6 +6,7 @@ import { AttrModel, ContentModel } from '../../types/content'
 import { useRequest } from 'ahooks'
 import { api } from '../../api'
 import { FormApi } from '@douyinfe/semi-ui/lib/es/form'
+import styles from './index.module.scss'
 
 type Props = {
   content: ContentModel
@@ -21,10 +22,12 @@ const EditCard = (props: Props) => {
     return api.post('/content/update_attr', values).then((res) => {
       props.onFinish?.(res.data)
     })
+  }, {
+    manual: true
   })
 
   return (
-    <div>
+    <div className={styles.editCard}>
       <Form getFormApi={fapi => {
         formApi.current = fapi
       }}>
