@@ -27,13 +27,13 @@ export type ContentType = {
 
 export type AttrSchema = {
   Name: string
-  Label: string
-  DataType: 'number' | 'string'
+  Label?: string
+  DataType?: 'number' | 'string'
   // RefColl: number
   // RefCollProp: string
 
 }
 
 export type AttrModel = {
-  Value: string
+  Value?: string | number
 } & AttrSchema

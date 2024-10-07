@@ -1,7 +1,7 @@
 import { ArrayField, Button, Descriptions, Form, Modal, Space } from '@douyinfe/semi-ui'
 import { IconCheckCircleStroked, IconFile, IconFolder, IconMinus, IconPlus } from '@douyinfe/semi-icons'
 
-import React, { useRef } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import { AttrModel, ContentModel } from '../../types/content'
 import { useRequest } from 'ahooks'
 import { api } from '../../api'
@@ -17,7 +17,36 @@ const EditCard = (props: Props) => {
   const {content} = props
   const formApi = useRef<FormApi>() 
 
-  const {runAsync: saveAttrs, loading: saveLoading} = useRequest(() => {
+  useEffect(() => {
+
+    if(content.ID && !content.Attrs?.length) {
+      content.Attrs = [
+        {
+          Name: '',
+          Value: ''
+        }
+      ]
+      formApi.current?.setValues(content)
+    }
+  }, [content])
+
+  const {runAsync: addContent, loading: addLoading, data: addRes} = useRequest<ContentModel, void[]>(() => {
+    return api.post('/content/add', content ).then(res => { 
+      formApi.current?.setValues({
+        Attrs: [
+          {
+            Name: '',
+            Value: ''
+          }
+        ]
+      })
+      return res.data 
+    })
+  }, {
+    manual: true
+  })
+
+  const {runAsync: saveAttrs, loading: attrLoading} = useRequest(() => {
     const values = formApi.current?.getValues()
     return api.post('/content/update_attr', values).then((res) => {
       props.onFinish?.(res.data)
@@ -25,6 +54,10 @@ const EditCard = (props: Props) => {
   }, {
     manual: true
   })
+
+  const isAdded = useMemo(() => {
+    return content.ID || addRes?.ID
+  }, [content.ID, addRes])
 
   return (
     <div className={styles.editCard}>
@@ -41,6 +74,7 @@ const EditCard = (props: Props) => {
           {content.Size}
         </Form.Slot>
         {/* <Form.Input label="" ></Form.Input> */}
+
         <ArrayField field='Attrs'>
           {({add, arrayFields}) => {
             return arrayFields.map(item => {
@@ -48,16 +82,20 @@ const EditCard = (props: Props) => {
                 <Form.Input field={`${item.field}.Name`} placeholder={'Attr Name'} ></Form.Input>
                 <Form.Input field={`${item.field}.Value`} placeholder={'Value'} ></Form.Input>
                 <Button circle icon={<IconPlus/> } theme='borderless' onClick={() => add()} ></Button>
-                <Button circle icon={<IconMinus/> } theme='borderless' onClick={() => item.remove()} ></Button>
+                <Button disabled={arrayFields.length <= 1} circle icon={<IconMinus/> } theme='borderless' onClick={() => item.remove()} ></Button>
               </Space>
             })
           }}
         </ArrayField>
       </Form>
       <Space>
-        <Button theme='solid' loading={saveLoading} onClick={() => {
-          saveAttrs()
-        }} >保存</Button>
+        <Button theme='solid' loading={addLoading || attrLoading} onClick={() => {
+          if(content.ID) {
+            saveAttrs()
+          } else {
+            addContent()
+          }
+        }}  >{isAdded ? '添加' : '保存'}</Button>
         <Button onClick={() => {
           props.onFinish?.()
         }}>取消</Button>

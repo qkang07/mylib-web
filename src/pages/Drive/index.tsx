@@ -1,5 +1,5 @@
 import { Button, ButtonGroup, Input, List, Popover, Space, Table } from '@douyinfe/semi-ui'
-import { IconCheckCircleStroked, IconFile, IconFolder, IconPlus } from '@douyinfe/semi-icons'
+import { IconBriefStroked, IconCheckCircleStroked, IconFile, IconFolder, IconPlus } from '@douyinfe/semi-icons'
 import { useRequest } from 'ahooks'
 import React, { useState } from 'react'
 import { api } from '../../api'
@@ -13,6 +13,7 @@ export type PathInfo = {
   IsDir: boolean
   Size?: number
   Exist?: boolean
+  Path?: string
 }
 
 type Props = {}
@@ -50,12 +51,15 @@ const Drives = (props: Props) => {
       console.log(res.data)
       
       return res.data.map(item => {
-        if(typeof item === 'string') {
+        // drives 会是这种情况
+        if(typeof item === 'string') { 
           return {
             Name: item,
-            IsDir: true
+            IsDir: true,
+            Path: item
           }
         } else {
+          item.Path = path.join(currentPath, item.Name)
           return item
         }
       })
@@ -122,7 +126,7 @@ const Drives = (props: Props) => {
               if(record.IsDir) {
                 return <IconFolder />
               } else {
-                return <IconFile/>
+                return <IconBriefStroked/>
               }
             }
           },
