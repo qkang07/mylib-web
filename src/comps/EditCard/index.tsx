@@ -98,7 +98,7 @@ const EditCard = (props: Props) => {
         }}  >{isAdded ? '添加' : '保存'}</Button>
         <Button onClick={() => {
           props.onFinish?.()
-        }}>取消</Button>
+        }}>完成</Button>
       </Space>
     </div>
   )

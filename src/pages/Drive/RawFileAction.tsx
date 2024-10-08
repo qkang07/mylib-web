@@ -7,35 +7,40 @@ import { useRequest } from 'ahooks'
 import { api } from '../../api'
 
 type Props = {
-  file: PathInfo
+  pathInfo: PathInfo
+  onUpdate?: (file: PathInfo) => void
 }
 
 const RawFileAction = (props: Props) => {
-  const file = props.file
+  const info = props.pathInfo
   const [popVisible, setPopVisible] = useState(false)
-  const {runAsync: doAdd, loading: addLoading, data: content } = useRequest(() => {
-    return api.post('/content/add', file).then((res) => {
-      setPopVisible(true)
-      return res.data
+
+  const {runAsync: addContent, loading: addLoading, data: addRes} = useRequest<ContentModel, void[]>(() => {
+    return api.post('/content/add', info ).then(res => { 
+      return res.data 
     })
+  }, {
+    manual: true,
+    onSuccess() {
+      setPopVisible(true)
+    }
   })
 
+  
+
   return (
-    <Popover  content={<EditCard content={content} />} visible={popVisible} onClickOutSide={() => {
+    <Popover  content={<EditCard content={addRes} onFinish={() => {
+      setPopVisible(false)
+    }} />} visible={popVisible} onClickOutSide={() => {
       setPopVisible(false)
     }}>
-
-{
-          file.Exist ? <Button size='small' icon={<IconCheckCircleStroked/>} onClick={e => {
-            e.stopPropagation()
-            setPopVisible(true)
-          }}>
-              已收录
-          </Button> : <Button size='small' theme='solid' icon={<IconPlus/>} onClick={e => {
-          e.stopPropagation()
-          doAdd()
-        }} loading={addLoading} >收录</Button>
-        }
+      <Button loading={addLoading} size='small' icon={<IconCheckCircleStroked/>} onClick={e => {
+        e.stopPropagation()
+        if(info.Exist) 
+        addContent()
+      }}>
+        {info.Exist ? '已收录' : '收录'}
+      </Button> 
     </Popover>
   )
 }

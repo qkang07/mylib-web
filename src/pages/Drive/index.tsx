@@ -6,6 +6,7 @@ import { api } from '../../api'
 import styles from './index.module.scss'
 import EditCard from '../../comps/EditCard'
 import path from 'path-browserify'
+import RawFileAction from './RawFileAction'
 
 
 export type PathInfo = {
@@ -43,7 +44,7 @@ const Drives = (props: Props) => {
     //   }
     // ])
     let v = currentPath
-    if(!v.endsWith('/')){
+    if(v && !v.endsWith('/')){
       v = v + '/'
       setCurrentPath(v)
     }
@@ -142,19 +143,7 @@ const Drives = (props: Props) => {
             title: 'Actions',
             render(_, record, index) {
               return <Space>
-                <Popover content={<EditCard content={record} />}>
-                {
-                  record.Exist ? <Button size='small' icon={<IconCheckCircleStroked/>} onClick={e => {
-                    e.stopPropagation()
-                  }}>
-                     已收录
-                  </Button> : <Button size='small' theme='solid' icon={<IconPlus/>} onClick={e => {
-                  e.stopPropagation()
-                }} >收录</Button>
-                }
-
-                </Popover>
-                
+                <RawFileAction pathInfo={record}  />
               </Space>
             }
           }
