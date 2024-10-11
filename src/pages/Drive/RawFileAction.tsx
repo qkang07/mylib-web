@@ -15,7 +15,7 @@ const RawFileAction = (props: Props) => {
   const info = props.pathInfo
   const [popVisible, setPopVisible] = useState(false)
 
-  const {runAsync: addContent, loading: addLoading, data: addRes} = useRequest<ContentModel, void[]>(() => {
+  const {runAsync: addContent, loading: addLoading, data: addRes} = useRequest<ContentModel, void[]>(() => {h789
     return api.post('/content/add', info ).then(res => { 
       return res.data 
     })
