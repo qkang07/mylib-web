@@ -9,7 +9,7 @@ import { FormApi } from '@douyinfe/semi-ui/lib/es/form'
 import styles from './index.module.scss'
 
 type Props = {
-  content: ContentModel
+  content?: ContentModel
   onFinish?: (res?: ContentModel) => void
 }
 
@@ -19,7 +19,7 @@ const EditCard = (props: Props) => {
 
   useEffect(() => {
 
-    if(content.ID && !content.Attrs?.length) {
+    if(content?.ID && !content.Attrs?.length) {
       content.Attrs = [
         {
           Name: '',
@@ -30,21 +30,21 @@ const EditCard = (props: Props) => {
     }
   }, [content])
 
-  const {runAsync: addContent, loading: addLoading, data: addRes} = useRequest<ContentModel, void[]>(() => {
-    return api.post('/content/add', content ).then(res => { 
-      formApi.current?.setValues({
-        Attrs: [
-          {
-            Name: '',
-            Value: ''
-          }
-        ]
-      })
-      return res.data 
-    })
-  }, {
-    manual: true
-  })
+  // const {runAsync: addContent, loading: addLoading, data: addRes} = useRequest<ContentModel, void[]>(() => {
+  //   return api.post('/content/add', content ).then(res => { 
+  //     formApi.current?.setValues({
+  //       Attrs: [
+  //         {
+  //           Name: '',
+  //           Value: ''
+  //         }
+  //       ]
+  //     })
+  //     return res.data 
+  //   })
+  // }, {
+  //   manual: true
+  // })
 
   const {runAsync: saveAttrs, loading: attrLoading} = useRequest(() => {
     const values = formApi.current?.getValues()
@@ -55,9 +55,6 @@ const EditCard = (props: Props) => {
     manual: true
   })
 
-  const isAdded = useMemo(() => {
-    return content.ID || addRes?.ID
-  }, [content.ID, addRes])
 
   return (
     <div className={styles.editCard}>
@@ -65,13 +62,13 @@ const EditCard = (props: Props) => {
         formApi.current = fapi
       }}>
         <Form.Slot label="Name" >
-          {content.Name}
+          {content?.Name}
         </Form.Slot>
         <Form.Slot label="Path" >
-          {content.Path}
+          {content?.Path}
         </Form.Slot>
         <Form.Slot label="Size">
-          {content.Size}
+          {content?.Size}
         </Form.Slot>
         {/* <Form.Input label="" ></Form.Input> */}
 
@@ -89,13 +86,9 @@ const EditCard = (props: Props) => {
         </ArrayField>
       </Form>
       <Space>
-        <Button theme='solid' loading={addLoading || attrLoading} onClick={() => {
-          if(content.ID) {
-            saveAttrs()
-          } else {
-            addContent()
-          }
-        }}  >{isAdded ? '添加' : '保存'}</Button>
+        <Button theme='solid' loading={attrLoading} onClick={() => {
+          saveAttrs()
+        }}  >保存</Button>
         <Button onClick={() => {
           props.onFinish?.()
         }}>完成</Button>

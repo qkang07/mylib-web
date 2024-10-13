@@ -5,6 +5,7 @@ import { IconCheckCircleStroked, IconFile, IconFolder, IconPlus } from '@douyinf
 import EditCard from '../../comps/EditCard'
 import { useRequest } from 'ahooks'
 import { api } from '../../api'
+import { ContentModel } from '../../types/content'
 
 type Props = {
   pathInfo: PathInfo
@@ -15,7 +16,7 @@ const RawFileAction = (props: Props) => {
   const info = props.pathInfo
   const [popVisible, setPopVisible] = useState(false)
 
-  const {runAsync: addContent, loading: addLoading, data: addRes} = useRequest<ContentModel, void[]>(() => {h789
+  const {runAsync: addContent, loading: addLoading, data: addRes} = useRequest<ContentModel, void[]>(() => {
     return api.post('/content/add', info ).then(res => { 
       return res.data 
     })
@@ -29,15 +30,18 @@ const RawFileAction = (props: Props) => {
   
 
   return (
-    <Popover  content={<EditCard content={addRes} onFinish={() => {
+    <Popover trigger='custom' content={<EditCard content={addRes} onFinish={() => {
       setPopVisible(false)
     }} />} visible={popVisible} onClickOutSide={() => {
       setPopVisible(false)
     }}>
       <Button loading={addLoading} size='small' icon={<IconCheckCircleStroked/>} onClick={e => {
         e.stopPropagation()
-        if(info.Exist) 
-        addContent()
+        if(!info.Exist) {
+          addContent()
+        } else {
+          setPopVisible(true)
+        }
       }}>
         {info.Exist ? '已收录' : '收录'}
       </Button> 
