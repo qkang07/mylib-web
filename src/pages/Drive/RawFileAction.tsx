@@ -27,10 +27,19 @@ const RawFileAction = (props: Props) => {
     }
   })
 
+  const {runAsync: getContent, data: content} = useRequest(() => {
+    return api.get('/content/get', {params: {id: info.ContentId}}).then(res => res.data)
+  }, {
+    manual: true,
+    onSuccess(){
+      setPopVisible(true)
+    }
+  })
+
   
 
   return (
-    <Popover trigger='custom' content={<EditCard content={addRes} onFinish={() => {
+    <Popover trigger='custom' content={<EditCard content={addRes || content} onFinish={() => {
       setPopVisible(false)
     }} />} visible={popVisible} onClickOutSide={() => {
       setPopVisible(false)
@@ -40,7 +49,7 @@ const RawFileAction = (props: Props) => {
         if(!info.Exist) {
           addContent()
         } else {
-          setPopVisible(true)
+          getContent()
         }
       }}>
         {info.Exist ? '已收录' : '收录'}

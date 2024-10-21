@@ -35,5 +35,7 @@ export type AttrSchema = {
 }
 
 export type AttrModel = {
+  Id?: number
+  ContentId: number
   Value?: string | number
 } & AttrSchema

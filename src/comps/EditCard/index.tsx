@@ -1,7 +1,7 @@
 import { ArrayField, Button, Descriptions, Form, Modal, Space } from '@douyinfe/semi-ui'
 import { IconCheckCircleStroked, IconFile, IconFolder, IconMinus, IconPlus } from '@douyinfe/semi-icons'
 
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { AttrModel, ContentModel } from '../../types/content'
 import { useRequest } from 'ahooks'
 import { api } from '../../api'
@@ -18,17 +18,13 @@ const EditCard = (props: Props) => {
   const formApi = useRef<FormApi>() 
 
   useEffect(() => {
+    
+    setAttrs(content?.Attrs || [])
+  }, [content?.Attrs])
 
-    if(content?.ID && !content.Attrs?.length) {
-      content.Attrs = [
-        {
-          Name: '',
-          Value: ''
-        }
-      ]
-      formApi.current?.setValues(content)
-    }
-  }, [content])
+
+
+  const [attrs, setAttrs] = useState<any[]>(content?.Attrs || [])
 
   // const {runAsync: addContent, loading: addLoading, data: addRes} = useRequest<ContentModel, void[]>(() => {
   //   return api.post('/content/add', content ).then(res => { 
@@ -47,19 +43,41 @@ const EditCard = (props: Props) => {
   // })
 
   const {runAsync: saveAttrs, loading: attrLoading} = useRequest(() => {
-    const values = formApi.current?.getValues()
-    return api.post('/content/update_attr', values).then((res) => {
-      props.onFinish?.(res.data)
+    const attrs: AttrModel[] = formApi.current?.getValues().Attrs || []
+    attrs.forEach(attr => {
+      attr.ContentId = content!.ID!
+    })
+    
+    return Promise.all(attrs.map(attr => {
+      return  api.post('/content/update_attr', attr)
+    })).then((res) => {
+      props.onFinish?.()
     })
   }, {
     manual: true
   })
+
+  const addAttr = (index: number) => {
+    attrs.splice(index, 0 , {
+      Name: '',
+      Value: '',
+
+    })
+    setAttrs([...attrs])
+  }
+
+  const removeAttr = (index: number) => {
+    attrs.splice(index, 1)
+    setAttrs([...attrs])
+  }
 
 
   return (
     <div className={styles.editCard}>
       <Form getFormApi={fapi => {
         formApi.current = fapi
+      }} initValues={{
+        Attrs: []
       }}>
         <Form.Slot label="Name" >
           {content?.Name}
@@ -70,9 +88,22 @@ const EditCard = (props: Props) => {
         <Form.Slot label="Size">
           {content?.Size}
         </Form.Slot>
-        {/* <Form.Input label="" ></Form.Input> */}
+        <Form.Input label="dsf" field='aaa'></Form.Input>
+        {
+          attrs.map((attr, index) => {
+            return <Space key={index} style={{display: 'flex'}}>
 
-        <ArrayField field='Attrs'>
+              <Form.Input field={`Attrs[${index}].Name`} />
+              <Form.Input field={`Attrs[${index}].Value`} />
+              <Button circle icon={<IconPlus/> } theme='borderless' onClick={() => addAttr(index + 1)} ></Button>
+              <Button disabled={attrs.length <= 1} circle icon={<IconMinus/> } theme='borderless' onClick={() => removeAttr(index)} ></Button>
+            </Space>
+          })
+        }
+        <div>
+          <Button icon={<IconPlus/>} onClick={() => addAttr(0)}>添加</Button>
+        </div>
+        {/* <ArrayField field='Attrs' initValue={[{}]}>
           {({add, arrayFields}) => {
             return arrayFields.map(item => {
               return <Space key={item.key}>
@@ -83,7 +114,7 @@ const EditCard = (props: Props) => {
               </Space>
             })
           }}
-        </ArrayField>
+        </ArrayField> */}
       </Form>
       <Space>
         <Button theme='solid' loading={attrLoading} onClick={() => {

@@ -15,6 +15,7 @@ export type PathInfo = {
   Size?: number
   Exist?: boolean
   Path?: string
+  ContentId?: number
 }
 
 type Props = {}
