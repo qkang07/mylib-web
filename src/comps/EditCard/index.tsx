@@ -46,6 +46,7 @@ const EditCard = (props: Props) => {
     const attrs: AttrModel[] = formApi.current?.getValues().Attrs || []
     attrs.forEach(attr => {
       attr.ContentId = content!.ID!
+      attr.DataType = 2
     })
     
     return Promise.all(attrs.map(attr => {
@@ -93,8 +94,8 @@ const EditCard = (props: Props) => {
           attrs.map((attr, index) => {
             return <Space key={index} style={{display: 'flex'}}>
 
-              <Form.Input field={`Attrs[${index}].Name`} />
-              <Form.Input field={`Attrs[${index}].Value`} />
+              <Form.Input field={`Attrs[${index}].AttrName`} />
+              <Form.Input field={`Attrs[${index}].StringValue`} />
               <Button circle icon={<IconPlus/> } theme='borderless' onClick={() => addAttr(index + 1)} ></Button>
               <Button disabled={attrs.length <= 1} circle icon={<IconMinus/> } theme='borderless' onClick={() => removeAttr(index)} ></Button>
             </Space>

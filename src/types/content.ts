@@ -28,7 +28,7 @@ export type ContentType = {
 export type AttrSchema = {
   Name: string
   Label?: string
-  DataType?: 'number' | 'string'
+  DataType: 1 | 2 // 1 number 2 string
   // RefColl: number
   // RefCollProp: string
 
@@ -37,5 +37,6 @@ export type AttrSchema = {
 export type AttrModel = {
   Id?: number
   ContentId: number
-  Value?: string | number
+  StringValue?: string
+  NumberValue?: number
 } & AttrSchema
