@@ -26,6 +26,7 @@ export type ContentType = {
 } & ModelBase
 
 export type AttrSchema = {
+  ID: number
   Name: string
   Label?: string
   DataType: 1 | 2 // 1 number 2 string

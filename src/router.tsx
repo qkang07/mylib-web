@@ -5,6 +5,7 @@ import {
 } from "react-router-dom";
 import Drives from "./pages/Drive";
 import Search from "./pages/Search";
+import AttrSchemaList from "./pages/AttrSchema";
 
 export const router = createBrowserRouter([
   {
@@ -14,5 +15,8 @@ export const router = createBrowserRouter([
   {
     path: '/search',
     element: <Search/>
+  }, {
+    path: '/attr_schema',
+    element: <AttrSchemaList/>
   }
 ])

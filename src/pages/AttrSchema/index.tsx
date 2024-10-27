@@ -1,23 +1,43 @@
-import { Button, Space, Table } from '@douyinfe/semi-ui'
+import { Button, Modal, Popconfirm, Space, Table, Toast } from '@douyinfe/semi-ui'
 import { useRequest } from 'ahooks'
-import React from 'react'
+import React, { useState } from 'react'
 import { api } from '../../api'
+import { AttrSchema } from '../../types/content'
+import AttrSchemaEditor from './Editor'
 
 type Props = {}
 
-const AttrSchema = (props: Props) => {
+const AttrSchemaList = (props: Props) => {
 
-  const {data: attrList, loading, runAsync: loadAttrs} = useRequest(() => {
-    return api.get('/attrs').then(res => res.data)
+  const {data: schemaList, loading, runAsync: loadSchemas} = useRequest<AttrSchema[], []>(() => {
+    return api.get('/attr/schema/list').then(res => res.data)
   })
 
+  const {runAsync: delSchema} = useRequest((id: any) => {
+    return api.delete('/attr/schema', {
+      params: {
+        id
+      }
+    })
+  }, {
+    manual: true,
+    onSuccess(){
+      Toast.success('删除成功')
+      loadSchemas()
+    }
+  })
+
+
+  const [editVisible, setEditVisible] = useState(false)
+
+  const [currentSchema, setCurrentSchema] = useState<AttrSchema>()
   
 
   return (
     <div>
       <Table
-      
-      dataSource={attrList}
+      loading={loading}
+      dataSource={schemaList}
         columns={[
           {
             dataIndex: 'Name',
@@ -41,18 +61,29 @@ const AttrSchema = (props: Props) => {
               return <Space>
 
                 <Button onClick={() => {
-
+                  setCurrentSchema(item)
+                  setEditVisible(true)
                 }} >编辑</Button>
-                <Button onClick={() => {
+                <Popconfirm onConfirm={() => {
+                    delSchema(item.ID)
 
-                }}>删除</Button>
+                }}>
+                  <Button>删除</Button>
+                </Popconfirm>
               </Space>
             }
           }
         ]}
       ></Table>
+      <Modal visible={editVisible}  onCancel={() =>setEditVisible(false)} 
+        lazyRender
+        >
+          <AttrSchemaEditor attr={currentSchema} onChange={() => {
+            loadSchemas()
+          }} />
+        </Modal>
     </div>
   )
 }
 
-export default AttrSchema
+export default AttrSchemaList

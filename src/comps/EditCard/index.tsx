@@ -7,11 +7,15 @@ import { useRequest } from 'ahooks'
 import { api } from '../../api'
 import { FormApi } from '@douyinfe/semi-ui/lib/es/form'
 import styles from './index.module.scss'
+import { FormAttrSelect } from '../AttrSelect'
 
 type Props = {
   content?: ContentModel
   onFinish?: (res?: ContentModel) => void
 }
+
+
+
 
 const EditCard = (props: Props) => {
   const {content} = props
@@ -93,8 +97,9 @@ const EditCard = (props: Props) => {
         {
           attrs.map((attr, index) => {
             return <Space key={index} style={{display: 'flex'}}>
-
-              <Form.Input field={`Attrs[${index}].AttrName`} />
+              
+              {/* <Form.Input field={`Attrs[${index}].AttrName`} /> */}
+              <FormAttrSelect field={`Attrs[${index}].AttrName`} />
               <Form.Input field={`Attrs[${index}].StringValue`} />
               <Button circle icon={<IconPlus/> } theme='borderless' onClick={() => addAttr(index + 1)} ></Button>
               <Button disabled={attrs.length <= 1} circle icon={<IconMinus/> } theme='borderless' onClick={() => removeAttr(index)} ></Button>
