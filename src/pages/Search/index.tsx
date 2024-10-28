@@ -7,29 +7,30 @@ import { useRequest } from 'ahooks'
 import { api } from '../../api'
 import { ContentModel } from '../../types/content'
 import { Form, FormApi } from '@douyinfe/semi-ui/lib/es/form'
+import { IconClose, IconPlus } from '@douyinfe/semi-icons'
 
 
 type Operator = 'eq' | 'lt' |'gt'|'le'|'ge'|'not'|'in'|'notin'|'between'
 
 const OPTypes: {
-  Name: string,
-  Value: Operator
+  name: string,
+  value: Operator
 }[] = [
-  {Name: '=', Value: 'eq'},
-  {Name: '<', Value: 'eq'},
-  {Name: '>', Value: 'eq'},
-  {Name: '<=', Value: 'eq'},
-  {Name: '>=', Value: 'eq'},
-  {Name: '!=', Value: 'eq'},
-  {Name: 'in', Value: 'eq'},
-  {Name: 'not in', Value: 'notin'},
-  {Name: 'between', Value: 'between'},
+  {name: '=', value: 'eq'},
+  {name: '<', value: 'eq'},
+  {name: '>', value: 'eq'},
+  {name: '<=', value: 'eq'},
+  {name: '>=', value: 'eq'},
+  {name: '!=', value: 'eq'},
+  {name: 'in', value: 'eq'},
+  {name: 'not in', value: 'notin'},
+  {name: 'between', value: 'between'},
 ]
 
 type Condition = {
   Name: string
   Operator: Operator
-  Values: (string | number)[]
+  Value: string
 }
 
 
@@ -42,6 +43,9 @@ const Search = (props: Props) => {
   const formApi = useRef<FormApi>()
 
   const [conds, setConds] = useState<Condition[]>([])
+  const updateConds = () => {
+    setConds([...conds])
+  }
   const {data: result, loading, runAsync: doSearch} = useRequest(() => {
     return api.post<ContentModel[]>('/content/search', conds).then(res => res.data)
   }, {
@@ -86,15 +90,36 @@ const Search = (props: Props) => {
         <Form
         getFormApi={api => formApi.current = api}
         >
-          
+
         </Form>
         {conds.map((cond, i) => {
           return <div key={i} className={styles.conditionCard}>
-            <Input value={cond.Name} />
-            <Select></Select>
-            <Input/>
+            <Input value={cond.Name} onChange={v => {
+              cond.Name = v
+              updateConds()
+            }} />
+            <Select optionList={OPTypes} value={cond.Operator} onChange={v => {
+              cond.Operator = v as Operator
+              updateConds()
+            }} ></Select>
+            <Input value={cond.Value} onChange={v => {
+              cond.Value = v
+              updateConds()
+            }} />
+            <Button icon={<IconClose/> } type='danger' size='small' onClick={() => {
+              conds.splice(i, 1)
+              updateConds()
+            }} ></Button>
           </div>
         })}
+        <Button icon={<IconPlus/> } size='small' onClick={() => {
+          conds.push({
+            Name: '',
+            Operator: 'eq',
+            Value: ''
+          })
+          updateConds()
+        }}></Button>
       </div>
       <div className={styles.result} >
         <Table dataSource={result} loading columns={columns} ></Table>

@@ -266,6 +266,13 @@
   dependencies:
     classnames "^2.2.6"
 
+"@douyinfe/semi-icons@^2.68.3":
+  version "2.68.3"
+  resolved "https://registry.npmmirror.com/@douyinfe/semi-icons/-/semi-icons-2.68.3.tgz#cd92348957a15aa4d2e13d0566da36388806ba4f"
+  integrity sha512-CBDVc4HhtuNFdCf4KjCRO496hlO1dAwgtvLlI+2Xu1Rz+K03ssBTLTx9lVWSWeCY8W62mhF906cO5Wqtdo786w==
+  dependencies:
+    classnames "^2.2.6"
+
 "@douyinfe/semi-illustrations@2.68.2":
   version "2.68.2"
   resolved "https://registry.npmmirror.com/@douyinfe/semi-illustrations/-/semi-illustrations-2.68.2.tgz#619844a3ad9dd6fbaf291b60c6ebf6c71e737fe4"
