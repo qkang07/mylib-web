@@ -30,14 +30,17 @@ export type AttrSchema = {
   Name: string
   Label?: string
   DataType: 1 | 2 // 1 number 2 string
+  Config?: string
   // RefColl: number
   // RefCollProp: string
 
 }
 
 export type AttrModel = {
-  Id?: number
+  ID?: number
   ContentId: number
-  StringValue?: string
+  Value?: string
   NumberValue?: number
-} & AttrSchema
+  SchemaId?: number
+  SchemaInfo?: AttrSchema
+}

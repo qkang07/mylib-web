@@ -49,12 +49,13 @@ const EditCard = (props: Props) => {
   const {runAsync: saveAttrs, loading: attrLoading} = useRequest(() => {
     const attrs: AttrModel[] = formApi.current?.getValues().Attrs || []
     attrs.forEach(attr => {
+      attr.ID = 0
       attr.ContentId = content!.ID!
-      attr.DataType = 2
+      attr.NumberValue = 0
     })
     
     return Promise.all(attrs.map(attr => {
-      return  api.post('/content/update_attr', attr)
+      return  api.post('/content/attr', attr)
     })).then((res) => {
       props.onFinish?.()
     })
@@ -93,14 +94,13 @@ const EditCard = (props: Props) => {
         <Form.Slot label="Size">
           {content?.Size}
         </Form.Slot>
-        <Form.Input label="dsf" field='aaa'></Form.Input>
         {
           attrs.map((attr, index) => {
             return <Space key={index} style={{display: 'flex'}}>
               
               {/* <Form.Input field={`Attrs[${index}].AttrName`} /> */}
-              <FormAttrSelect field={`Attrs[${index}].AttrName`} />
-              <Form.Input field={`Attrs[${index}].StringValue`} />
+              <FormAttrSelect field={`Attrs[${index}].SchemaId`} />
+              <Form.Input field={`Attrs[${index}].Value`} />
               <Button circle icon={<IconPlus/> } theme='borderless' onClick={() => addAttr(index + 1)} ></Button>
               <Button disabled={attrs.length <= 1} circle icon={<IconMinus/> } theme='borderless' onClick={() => removeAttr(index)} ></Button>
             </Space>

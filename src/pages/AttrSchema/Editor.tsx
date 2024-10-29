@@ -41,8 +41,8 @@ const AttrSchemaEditor = (props: Props) => {
           <Form.Input label="Name" field='Name' />
           <Form.Input label="Label" field='Label' />
           <Form.RadioGroup field='DataType'>
-            <Form.Radio value={1} label="数字"></Form.Radio>
-            <Form.Radio value={2} label="字符串"></Form.Radio>
+            <Form.Radio value={2} >字符串</Form.Radio>
+            <Form.Radio value={1} >数字</Form.Radio>
           </Form.RadioGroup>
           <Form.TextArea field='Config'></Form.TextArea>
         </Form>

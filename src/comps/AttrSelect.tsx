@@ -5,8 +5,8 @@ import { api } from '../api'
 import { AttrSchema } from '../types/content'
 
 type Props = {
-  value?: string
-  onChange?: (value?: string) => void
+  value?: number
+  onChange?: (value?: number) => void
 }
 
 const AttrSelect = (props: Props) => {
@@ -17,7 +17,7 @@ const AttrSelect = (props: Props) => {
     <Select loading={loading} 
     value={props.value} 
     onChange={v => {
-      props.onChange?.(v?.toString())
+      props.onChange?.(v as number)
     }}
     optionList={data?.map(attr => {
       return {

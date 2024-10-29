@@ -9,7 +9,7 @@ type Props = {}
 
 const AttrSchemaList = (props: Props) => {
 
-  const {data: schemaList, loading, runAsync: loadSchemas} = useRequest<AttrSchema[], []>(() => {
+  const {data: schemaList = [], loading, runAsync: loadSchemas} = useRequest<AttrSchema[], []>(() => {
     return api.get('/attr/schema/list').then(res => res.data)
   })
 
@@ -18,7 +18,7 @@ const AttrSchemaList = (props: Props) => {
       params: {
         id
       }
-    })
+    }).then(res => res.data)
   }, {
     manual: true,
     onSuccess(){
@@ -35,6 +35,15 @@ const AttrSchemaList = (props: Props) => {
 
   return (
     <div>
+      <Space>
+        <Button onClick={() => {
+          setCurrentSchema({
+            Name: '',
+
+          } as AttrSchema)
+          setEditVisible(true)
+        }} >添加</Button>
+      </Space>
       <Table
       loading={loading}
       dataSource={schemaList}
