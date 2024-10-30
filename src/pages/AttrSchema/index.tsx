@@ -89,6 +89,7 @@ const AttrSchemaList = (props: Props) => {
         >
           <AttrSchemaEditor attr={currentSchema} onChange={() => {
             loadSchemas()
+            setEditVisible(false)
           }} />
         </Modal>
     </div>
