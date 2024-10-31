@@ -21,14 +21,14 @@ const EditCard = (props: Props) => {
   const {content} = props
   const formApi = useRef<FormApi>() 
 
-  useEffect(() => {
+  // useEffect(() => {
     
-    setAttrs(content?.Attrs || [])
-  }, [content?.Attrs])
+  //   setAttrs(content?.Attrs || [])
+  // }, [content?.Attrs])
 
 
 
-  const [attrs, setAttrs] = useState<any[]>(content?.Attrs || [])
+  // const [attrs, setAttrs] = useState<any[]>(content?.Attrs || [])
 
   // const {runAsync: addContent, loading: addLoading, data: addRes} = useRequest<ContentModel, void[]>(() => {
   //   return api.post('/content/add', content ).then(res => { 
@@ -45,6 +45,16 @@ const EditCard = (props: Props) => {
   // }, {
   //   manual: true
   // })
+
+  const {data: attrs = [], loading: getAttrLoading, mutate: mutateAttrs} = useRequest(() => {
+    return api.get<AttrModel[]>('/content/attrs', {
+      params: {
+        id: content?.ID
+      }
+    }).then(res => res.data)
+  }, {
+    refreshDeps: [content?.ID]
+  })
 
   const {runAsync: saveAttrs, loading: attrLoading} = useRequest(() => {
     const attrs: AttrModel[] = formApi.current?.getValues().Attrs || []
@@ -65,16 +75,14 @@ const EditCard = (props: Props) => {
 
   const addAttr = (index: number) => {
     attrs.splice(index, 0 , {
-      Name: '',
-      Value: '',
-
+      ContentId: content!.ID as number
     })
-    setAttrs([...attrs])
+    mutateAttrs([...attrs])
   }
 
   const removeAttr = (index: number) => {
     attrs.splice(index, 1)
-    setAttrs([...attrs])
+    mutateAttrs([...attrs])
   }
 
 

@@ -2,6 +2,7 @@ import React from 'react'
 import styles from './index.module.scss'
 import { ContentModel } from '../../types/content'
 import { Button, Space, Tag } from '@douyinfe/semi-ui'
+import { useRequest } from 'ahooks'
 
 
 type Props = {
@@ -10,6 +11,12 @@ type Props = {
 
 const ContentCard = (props: Props) => {
   const {content} = props
+
+
+  const {data: attrs, loading: attrLoading} = useRequest(() => {
+    
+  })
+
   return (
     <div className={styles.contentCard}>
       <div className={styles.contentImg}>
