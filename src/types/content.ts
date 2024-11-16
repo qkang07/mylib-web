@@ -36,6 +36,17 @@ export type AttrSchema = {
 
 }
 
+export type ContentAttr = {
+  ID: number
+  ContentId: number
+  Value: string
+  Label: string
+  Name: string
+  NumberValue: number
+  SchemaId: number
+  DataType: number
+}
+
 export type AttrModel = {
   ID?: number
   ContentId: number

@@ -2,7 +2,7 @@ import { ArrayField, Button, Descriptions, Form, Modal, Space } from '@douyinfe/
 import { IconCheckCircleStroked, IconFile, IconFolder, IconMinus, IconPlus } from '@douyinfe/semi-icons'
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { AttrModel, ContentModel } from '../../types/content'
+import { AttrModel, AttrSchema, ContentAttr, ContentModel } from '../../types/content'
 import { useRequest } from 'ahooks'
 import { api } from '../../api'
 import { FormApi } from '@douyinfe/semi-ui/lib/es/form'
@@ -47,13 +47,14 @@ const EditCard = (props: Props) => {
   // })
 
   const {data: attrs = [], loading: getAttrLoading, mutate: mutateAttrs} = useRequest(() => {
-    return api.get<AttrModel[]>('/content/attrs', {
+    return api.get<Partial<ContentAttr>[]>('/content/attrs', {
       params: {
         id: content?.ID
       }
-    }).then(res => res.data)
+    }).then(res => res.data || [])
   }, {
-    refreshDeps: [content?.ID]
+    refreshDeps: [content?.ID],
+    debounceWait: 100
   })
 
   const {runAsync: saveAttrs, loading: attrLoading} = useRequest(() => {
@@ -73,8 +74,12 @@ const EditCard = (props: Props) => {
     manual: true
   })
 
+  useEffect(() => {
+    formApi.current?.setValue('Attrs', attrs)
+  },[attrs])
+
   const addAttr = (index: number) => {
-    attrs.splice(index, 0 , {
+    attrs.splice(index, 0 ,  {
       ContentId: content!.ID as number
     })
     mutateAttrs([...attrs])
@@ -83,6 +88,12 @@ const EditCard = (props: Props) => {
   const removeAttr = (index: number) => {
     attrs.splice(index, 1)
     mutateAttrs([...attrs])
+  }
+
+  const checkExistAttr = (attr: AttrSchema) => {
+
+    const attrs: ContentAttr[] = formApi.current?.getValue("Attrs")
+    return attrs.some(a => a.SchemaId === attr.ID)
   }
 
 
@@ -102,33 +113,41 @@ const EditCard = (props: Props) => {
         <Form.Slot label="Size">
           {content?.Size}
         </Form.Slot>
-        {
+        {/* {
           attrs.map((attr, index) => {
             return <Space key={index} style={{display: 'flex'}}>
               
-              {/* <Form.Input field={`Attrs[${index}].AttrName`} /> */}
               <FormAttrSelect field={`Attrs[${index}].SchemaId`} />
               <Form.Input field={`Attrs[${index}].Value`} />
               <Button circle icon={<IconPlus/> } theme='borderless' onClick={() => addAttr(index + 1)} ></Button>
               <Button disabled={attrs.length <= 1} circle icon={<IconMinus/> } theme='borderless' onClick={() => removeAttr(index)} ></Button>
             </Space>
           })
-        }
-        <div>
+        } */}
+        {/* <div>
           <Button icon={<IconPlus/>} onClick={() => addAttr(0)}>添加</Button>
-        </div>
-        {/* <ArrayField field='Attrs' initValue={[{}]}>
-          {({add, arrayFields}) => {
+        </div> */}
+        <ArrayField field='Attrs'>
+          {({arrayFields, add}) => {
+            
             return arrayFields.map(item => {
-              return <Space key={item.key}>
-                <Form.Input field={`${item.field}.Name`} placeholder={'Attr Name'} ></Form.Input>
-                <Form.Input field={`${item.field}.Value`} placeholder={'Value'} ></Form.Input>
-                <Button circle icon={<IconPlus/> } theme='borderless' onClick={() => add()} ></Button>
-                <Button disabled={arrayFields.length <= 1} circle icon={<IconMinus/> } theme='borderless' onClick={() => item.remove()} ></Button>
-              </Space>
+              return <Space key={item.key} style={{display: 'flex'}}>
+              
+              {/* <Form.Input field={`Attrs[${index}].AttrName`} /> */}
+              <FormAttrSelect field={`${item.field}.SchemaId`} removed={checkExistAttr} />
+              <Form.Input field={`${item.field}.Value`} />
+              <Button circle icon={<IconPlus/> } theme='borderless' onClick={() => add()} ></Button>
+              <Button disabled={arrayFields.length <= 1} circle icon={<IconMinus/> } theme='borderless' onClick={() => item.remove()} ></Button>
+            </Space>
+              // return <Space key={item.key}>
+              //   <Form.Input field={`${item.field}.Name`} placeholder={'Attr Name'} ></Form.Input>
+              //   <Form.Input field={`${item.field}.Value`} placeholder={'Value'} ></Form.Input>
+              //   <Button circle icon={<IconPlus/> } theme='borderless' onClick={() => add()} ></Button>
+              //   <Button disabled={arrayFields.length <= 1} circle icon={<IconMinus/> } theme='borderless' onClick={() => item.remove()} ></Button>
+              // </Space>
             })
           }}
-        </ArrayField> */}
+        </ArrayField>
       </Form>
       <Space>
         <Button theme='solid' loading={attrLoading} onClick={() => {

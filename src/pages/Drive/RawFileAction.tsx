@@ -36,10 +36,8 @@ const RawFileAction = (props: Props) => {
     }
   })
 
-  
-
   return (
-    <Popover trigger='custom' content={<EditCard content={addRes || content} onFinish={() => {
+    <Popover trigger='custom'  content={<EditCard content={addRes || content} onFinish={() => {
       setPopVisible(false)
     }} />} visible={popVisible} onClickOutSide={() => {
       setPopVisible(false)

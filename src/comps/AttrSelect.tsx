@@ -6,6 +6,7 @@ import { AttrSchema } from '../types/content'
 
 type Props = {
   value?: number
+  removed?: (attr: AttrSchema) => boolean
   onChange?: (value?: number) => void
 }
 
@@ -22,7 +23,8 @@ const AttrSelect = (props: Props) => {
     optionList={data?.map(attr => {
       return {
         label: attr.Name,
-        value: attr.ID
+        value: attr.ID,
+        disabled: attr.ID !== props.value && props.removed?.(attr)
       }
     })} ></Select>
   )
