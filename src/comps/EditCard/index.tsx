@@ -58,16 +58,20 @@ const EditCard = (props: Props) => {
   })
 
   const {runAsync: saveAttrs, loading: attrLoading} = useRequest(() => {
-    const attrs: AttrModel[] = formApi.current?.getValues().Attrs || []
+    const newAttrs: AttrModel[] = formApi.current?.getValues().Attrs || []
+    const promises: Promise<void>[] = []
     attrs.forEach(attr => {
-      attr.ID = 0
-      attr.ContentId = content!.ID!
-      attr.NumberValue = 0
+      const na = newAttrs.find(a => a.ID === attr.ID)
+      if(!na) {
+        promises.push(api.delete('/content/attr?id=' + attr.ID))
+      } else {
+
+        na.ContentId = content!.ID!
+        na.NumberValue = 0
+        promises.push(api.post('/content/attr', na))
+      }
     })
-    
-    return Promise.all(attrs.map(attr => {
-      return  api.post('/content/attr', attr)
-    })).then((res) => {
+    Promise.all(promises).then(() => {
       props.onFinish?.()
     })
   }, {
@@ -78,17 +82,17 @@ const EditCard = (props: Props) => {
     formApi.current?.setValue('Attrs', attrs)
   },[attrs])
 
-  const addAttr = (index: number) => {
-    attrs.splice(index, 0 ,  {
-      ContentId: content!.ID as number
-    })
-    mutateAttrs([...attrs])
-  }
+  // const addAttr = (index: number) => {
+  //   attrs.splice(index, 0 ,  {
+  //     ContentId: content!.ID as number
+  //   })
+  //   mutateAttrs([...attrs])
+  // }
 
-  const removeAttr = (index: number) => {
-    attrs.splice(index, 1)
-    mutateAttrs([...attrs])
-  }
+  // const removeAttr = (index: number) => {
+  //   attrs.splice(index, 1)
+  //   mutateAttrs([...attrs])
+  // }
 
   const checkExistAttr = (attr: AttrSchema) => {
 
@@ -101,7 +105,7 @@ const EditCard = (props: Props) => {
     <div className={styles.editCard}>
       <Form getFormApi={fapi => {
         formApi.current = fapi
-      }} initValues={{
+      }} allowEmpty initValues={{
         Attrs: []
       }}>
         <Form.Slot label="Name" >
@@ -132,10 +136,9 @@ const EditCard = (props: Props) => {
             
             return arrayFields.map(item => {
               return <Space key={item.key} style={{display: 'flex'}}>
-              
               {/* <Form.Input field={`Attrs[${index}].AttrName`} /> */}
-              <FormAttrSelect field={`${item.field}.SchemaId`} removed={checkExistAttr} />
-              <Form.Input field={`${item.field}.Value`} />
+              <FormAttrSelect label="Attribute" field={`${item.field}.SchemaId`} removed={checkExistAttr} />
+              <Form.Input label="Value" field={`${item.field}.Value`} />
               <Button circle icon={<IconPlus/> } theme='borderless' onClick={() => add()} ></Button>
               <Button disabled={arrayFields.length <= 1} circle icon={<IconMinus/> } theme='borderless' onClick={() => item.remove()} ></Button>
             </Space>

@@ -35,6 +35,9 @@ const RawFileAction = (props: Props) => {
       setPopVisible(true)
     }
   })
+  if( info.IsDir) {
+    return <Button>扫描</Button>
+  }
 
   return (
     <Popover trigger='custom'  content={<EditCard content={addRes || content} onFinish={() => {

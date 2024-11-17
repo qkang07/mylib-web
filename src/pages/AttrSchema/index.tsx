@@ -84,7 +84,7 @@ const AttrSchemaList = (props: Props) => {
           }
         ]}
       ></Table>
-      <Modal visible={editVisible}  onCancel={() =>setEditVisible(false)} 
+      <Modal footer={null} visible={editVisible}  onCancel={() =>setEditVisible(false)} 
         lazyRender
         >
           <AttrSchemaEditor attr={currentSchema} onChange={() => {
