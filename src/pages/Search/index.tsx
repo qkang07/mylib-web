@@ -5,33 +5,9 @@ import { ColumnProps } from '@douyinfe/semi-ui/lib/es/table'
 import EditCard from '../../comps/EditCard'
 import { useRequest } from 'ahooks'
 import { api } from '../../api'
-import { ContentModel } from '../../types/content'
+import { CollectionNode, ConditionCollection, ContentModel } from '../../types/content'
 import { Form, FormApi } from '@douyinfe/semi-ui/lib/es/form'
 import { IconClose, IconPlus } from '@douyinfe/semi-icons'
-
-
-type Operator = 'eq' | 'lt' |'gt'|'le'|'ge'|'not'|'in'|'notin'|'between'
-
-const OPTypes: {
-  name: string,
-  value: Operator
-}[] = [
-  {name: '=', value: 'eq'},
-  {name: '<', value: 'eq'},
-  {name: '>', value: 'eq'},
-  {name: '<=', value: 'eq'},
-  {name: '>=', value: 'eq'},
-  {name: '!=', value: 'eq'},
-  {name: 'in', value: 'eq'},
-  {name: 'not in', value: 'notin'},
-  {name: 'between', value: 'between'},
-]
-
-type Condition = {
-  Name: string
-  Operator: Operator
-  Value: string
-}
 
 
 
@@ -42,9 +18,13 @@ const Search = (props: Props) => {
 
   const formApi = useRef<FormApi>()
 
-  const [conds, setConds] = useState<Condition[]>([])
+  const [condition, setCondition] = useState<ConditionCollection>({
+    Type: 'and',
+    Children: []
+  })
   const updateConds = () => {
-    setConds([...conds])
+
+    setCondition({...condition})
   }
   const {data: result, loading, runAsync: doSearch} = useRequest(() => {
     return api.post<ContentModel[]>('/content/search', conds).then(res => res.data)

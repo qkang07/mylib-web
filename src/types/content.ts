@@ -55,3 +55,36 @@ export type AttrModel = {
   SchemaId?: number
   SchemaInfo?: AttrSchema
 }
+
+
+
+
+export type ConditionOperator = 'eq' | 'lt' |'gt'|'le'|'ge'|'not'|'in'|'notin'|'between' | 'exist' | 'not_exist'
+
+export const OperatorTypes: {
+  name: string,
+  value: ConditionOperator
+}[] = [
+  {name: '=', value: 'eq'},
+  {name: '<', value: 'eq'},
+  {name: '>', value: 'eq'},
+  {name: '<=', value: 'eq'},
+  {name: '>=', value: 'eq'},
+  {name: '!=', value: 'eq'},
+  {name: 'in', value: 'eq'},
+  {name: 'not in', value: 'notin'},
+  {name: 'between', value: 'between'},
+]
+
+
+export type DirectCondition = {
+  Attr: number // attr schema id
+  Operator: ConditionOperator
+  Values?: (string | number)[]
+}
+
+export type ConditionCollection = {
+  Type: 'and' | 'or' | 'not'
+  Children?: (DirectCondition | ConditionCollection)[]
+}
+
