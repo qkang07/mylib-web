@@ -1,6 +1,8 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
-import { ConditionCollection } from '../../types/content'
+import { ConditionCollection, DirectCondition } from '../../types/content'
 import styles from './index.module.less'
+import { IconPlus } from '@douyinfe/semi-icons'
+import { Button, Tag } from '@douyinfe/semi-ui'
 
 type Props = {
   initConditions?: ConditionCollection
@@ -39,7 +41,10 @@ const ConditionsEditor = forwardRef<ConditionsEditorRef, Props>((props, ref) => 
 
   return (
     <div className={styles.conditionsEditor}>
-      {}
+      {(conditions?.Children as DirectCondition[]).map((cond) => {
+        return <Button>{cond.Attr}</Button>
+      })}
+      <Button icon={<IconPlus/>}></Button>
     </div>
   )
 })

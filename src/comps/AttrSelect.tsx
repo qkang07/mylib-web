@@ -3,6 +3,7 @@ import { useRequest } from 'ahooks'
 import React from 'react'
 import { api } from '../api'
 import { AttrSchema } from '../types/content'
+import { useAttrSchemas } from '../common/useAttrSchemas'
 
 type Props = {
   value?: number
@@ -11,9 +12,11 @@ type Props = {
 }
 
 const AttrSelect = (props: Props) => {
+
   const {loading, data} = useRequest<AttrSchema[], []>(() => {
     return api.get('/attr/schema/list').then(res => res.data)
   })
+  const {} = useAttrSchemas()
   return (
     <Select loading={loading} 
     value={props.value} 
