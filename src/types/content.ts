@@ -59,21 +59,10 @@ export type AttrModel = {
 
 
 
-export type ConditionOperator = 'eq' | 'lt' |'gt'|'le'|'ge'|'not'|'in'|'notin'|'between' | 'exist' | 'not_exist'
+export type ConditionOperator =   '=' | '>' | '<' | '>=' | '<=' | 'not' | 'in' | 'not_in' | 'between' | 'exist' | 'not_exist'
 
-export const OperatorTypes: {
-  name: string,
-  value: ConditionOperator
-}[] = [
-  {name: '=', value: 'eq'},
-  {name: '<', value: 'eq'},
-  {name: '>', value: 'eq'},
-  {name: '<=', value: 'eq'},
-  {name: '>=', value: 'eq'},
-  {name: '!=', value: 'eq'},
-  {name: 'in', value: 'eq'},
-  {name: 'not in', value: 'notin'},
-  {name: 'between', value: 'between'},
+export const OperatorTypes: string[] = [
+  '=', '>', '<', '>=', '<=', 'not', 'in', 'not_in', 'between', 'exist', 'not_exist'
 ]
 
 

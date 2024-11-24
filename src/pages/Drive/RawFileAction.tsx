@@ -35,8 +35,16 @@ const RawFileAction = (props: Props) => {
       setPopVisible(true)
     }
   })
+
+  const {runAsync: walkPath} =useRequest(() => {
+    return api.get('/fs/walk?path=' + encodeURIComponent(info.Path!)).then(res => res.data)
+  }, {manual: true})
+
   if( info.IsDir) {
-    return <Button>扫描</Button>
+    return <Button onClick={(e) => {
+      e.stopPropagation()
+      walkPath()
+    }}>扫描</Button>
   }
 
   return (

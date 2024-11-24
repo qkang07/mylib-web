@@ -1,12 +1,16 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 import { ConditionCollection, DirectCondition } from '../../types/content'
-import styles from './index.module.less'
+import styles from './index.module.scss'
 import { IconPlus } from '@douyinfe/semi-icons'
-import { Button, Tag } from '@douyinfe/semi-ui'
+import { Button, Popover, Select, Space, Tag } from '@douyinfe/semi-ui'
+import AttrSelect from '../AttrSelect'
+import { Input } from '@douyinfe/semi-ui/lib/es/input'
+import AttrConditionEditor from './AttrConditionEditor'
 
 type Props = {
   initConditions?: ConditionCollection
   onChange?: (conditions: ConditionCollection) => void
+  className?: string
 }
 
 type ConditionsEditorRef = {
@@ -16,7 +20,10 @@ type ConditionsEditorRef = {
 
 const ConditionsEditor = forwardRef<ConditionsEditorRef, Props>((props, ref) => {
 
-  const [conditions, setConditions] = useState<ConditionCollection | undefined >(props.initConditions)
+  const [conditions, setConditions] = useState<ConditionCollection >(props.initConditions || {
+    Type:'and',
+    Children: []
+  })
 
   useEffect(() => {
     if(props.initConditions && !conditions) {
@@ -24,28 +31,43 @@ const ConditionsEditor = forwardRef<ConditionsEditorRef, Props>((props, ref) => 
     }
   }, [props.initConditions])
 
-  const updateConditions = (conds: ConditionCollection) => {
 
-  }
 
   const reset = () => {
-
+    conditions.Children?.splice(0)
+    setConditions({...conditions})
+    props.onChange?.(conditions)
   }
   useImperativeHandle(ref, () => {
     return {
-      updateConditions,
+      updateConditions(conds: ConditionCollection) {
+        setConditions({...conds})
+      },
       reset
     }
   })
 
 
   return (
-    <div className={styles.conditionsEditor}>
-      {(conditions?.Children as DirectCondition[]).map((cond) => {
-        return <Button>{cond.Attr}</Button>
+    <Space wrap className={`${props.className || ''}`}>
+      {(conditions?.Children as DirectCondition[]).map((cond, index) => {
+        return <AttrConditionEditor key={index} value={cond} onChange={(v) => {
+          conditions.Children![index] = v
+          setConditions({...conditions})
+          props.onChange?.(conditions)
+          
+        }} 
+        onRemove={() => {
+          conditions.Children?.splice(index, 1)
+          setConditions({...conditions})
+        }}
+        />
       })}
-      <Button icon={<IconPlus/>}></Button>
-    </div>
+      <Button icon={<IconPlus/>} onClick={() => {
+        conditions.Children?.push({} as DirectCondition)
+        setConditions({...conditions})
+      }}></Button>
+    </Space>
   )
 })
 

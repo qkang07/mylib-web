@@ -8,6 +8,7 @@ import { api } from '../../api'
 import { CollectionNode, ConditionCollection, ContentModel } from '../../types/content'
 import { Form, FormApi } from '@douyinfe/semi-ui/lib/es/form'
 import { IconClose, IconPlus } from '@douyinfe/semi-icons'
+import ConditionsEditor from '../../comps/ConditionsEditor'
 
 
 
@@ -16,18 +17,13 @@ type Props = {}
 
 const Search = (props: Props) => {
 
-  const formApi = useRef<FormApi>()
-
   const [condition, setCondition] = useState<ConditionCollection>({
     Type: 'and',
     Children: []
   })
-  const updateConds = () => {
 
-    setCondition({...condition})
-  }
   const {data: result, loading, runAsync: doSearch} = useRequest(() => {
-    return api.post<ContentModel[]>('/content/search', conds).then(res => res.data)
+    return api.post<ContentModel[]>('/content/search', condition).then(res => res.data.data)
   }, {
     manual: true
   })
@@ -67,42 +63,11 @@ const Search = (props: Props) => {
   return (
     <div>
       <div className={styles.conditions}>
-        <Form
-        getFormApi={api => formApi.current = api}
-        >
-
-        </Form>
-        {conds.map((cond, i) => {
-          return <div key={i} className={styles.conditionCard}>
-            <Input value={cond.Name} onChange={v => {
-              cond.Name = v
-              updateConds()
-            }} />
-            <Select optionList={OPTypes} value={cond.Operator} onChange={v => {
-              cond.Operator = v as Operator
-              updateConds()
-            }} ></Select>
-            <Input value={cond.Value} onChange={v => {
-              cond.Value = v
-              updateConds()
-            }} />
-            <Button icon={<IconClose/> } type='danger' size='small' onClick={() => {
-              conds.splice(i, 1)
-              updateConds()
-            }} ></Button>
-          </div>
-        })}
-        <Button icon={<IconPlus/> } size='small' onClick={() => {
-          conds.push({
-            Name: '',
-            Operator: 'eq',
-            Value: ''
-          })
-          updateConds()
-        }}></Button>
+        <ConditionsEditor className={styles.editor} initConditions={condition} onChange={(cond) => setCondition(cond)}/>
+        <Button type='primary' onClick={() => doSearch()} >Search</Button>
       </div>
       <div className={styles.result} >
-        <Table dataSource={result} loading columns={columns} ></Table>
+        <Table dataSource={result} loading={loading} columns={columns} ></Table>
       </div>
     </div>
   )

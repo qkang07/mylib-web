@@ -8,22 +8,23 @@ import { useAttrSchemas } from '../common/useAttrSchemas'
 type Props = {
   value?: number
   removed?: (attr: AttrSchema) => boolean
-  onChange?: (value?: number) => void
+  onChange?: (value: number, attr: AttrSchema) => void
 }
 
 const AttrSelect = (props: Props) => {
 
-  const {loading, data} = useRequest<AttrSchema[], []>(() => {
-    return api.get('/attr/schema/list').then(res => res.data)
-  })
-  const {} = useAttrSchemas()
+  // const {loading, data} = useRequest<AttrSchema[], []>(() => {
+  //   return api.get('/attr/schema/list').then(res => res.data)
+  // })
+  const {attrSchemas, loading} = useAttrSchemas()
   return (
-    <Select loading={loading} 
+    <Select style={{minWidth:60}} loading={loading} 
     value={props.value} 
     onChange={v => {
-      props.onChange?.(v as number)
+      const attr = attrSchemas.find(a => a.ID === v)
+      props.onChange?.(v as number, attr!)
     }}
-    optionList={data?.map(attr => {
+    optionList={attrSchemas?.map(attr => {
       return {
         label: attr.Name,
         value: attr.ID,

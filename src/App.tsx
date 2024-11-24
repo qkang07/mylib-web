@@ -11,13 +11,13 @@ function App() {
      <div className='site-nav'>
       <Space>
         <Typography.Text link={{href: '/drives'}}>
-          <Button >Drives</Button>
+          <Button theme='borderless' type='tertiary' >Drives</Button>
         </Typography.Text>
         <Typography.Text link={{href: '/search'}}>
-          <Button>Search</Button>
+          <Button theme='borderless'  type='tertiary' >Search</Button>
         </Typography.Text>
         <Typography.Text link={{href: '/attr_schema'}}>
-          <Button>AttrSchemas</Button>
+          <Button theme='borderless'  type='tertiary' >AttrSchemas</Button>
         </Typography.Text>
       </Space>
      </div>
