@@ -1,4 +1,4 @@
-import { Button, ButtonGroup, Input, List, Popover, Space, Table } from '@douyinfe/semi-ui'
+import { Button, ButtonGroup, Divider, Input, List, Popover, Space, Table, Tag, TagInput } from '@douyinfe/semi-ui'
 import { IconBriefStroked, IconCheckCircleStroked, IconFile, IconFolder, IconPlus } from '@douyinfe/semi-icons'
 import { useRequest } from 'ahooks'
 import React, { useState } from 'react'
@@ -22,7 +22,7 @@ type Props = {}
 
 const Drives = (props: Props) => {
 
-  const [currentPath, setCurrentPath] = useState('')
+  const [paths, setPaths] = useState<string[]>([])
 
   const {data, loading, runAsync: getPathContent} = useRequest<PathInfo[], [void] >(() => {
     // return Promise.resolve([
@@ -44,12 +44,9 @@ const Drives = (props: Props) => {
     //     Exist: false
     //   }
     // ])
-    let v = currentPath
-    if(v && !v.endsWith('/')){
-      v = v + '/'
-      setCurrentPath(v)
-    }
-    return api.get<(string | PathInfo)[]>('/fs/path?path=' + encodeURIComponent(v)).then(res => {
+    const path = paths.length ? paths.join('/') + '/' : ''
+
+    return api.get<(string | PathInfo)[]>('/fs/path?path=' + encodeURIComponent(path)).then(res => {
       console.log(res.data)
       
       return res.data.map(item => {
@@ -61,7 +58,7 @@ const Drives = (props: Props) => {
             Path: item
           }
         } else {
-          item.Path = path.join(currentPath, item.Name)
+          item.Path = path + item.Name
           return item
         }
       })
@@ -73,14 +70,23 @@ const Drives = (props: Props) => {
   return (
     <div>
       <div>
-        <Input value={currentPath}
+        <TagInput value={paths}
+          draggable={false}
+          renderTagItem={(v, i, onClose)=> {
+            return <>
+            <Button theme='borderless' type='tertiary' style={{paddingLeft: 4, paddingRight: 4}} size='small'>{v}</Button>
+            <Divider margin={4} style={{borderColor: '#ccc', borderWidth: 1.5, transform: 'rotate(15deg)'}} layout='vertical' />
+            </> 
+          }}
           onChange={v => {
             
-            setCurrentPath(v)
+            setPaths(v)
           }}
-          onEnterPress={() => {
-            
-            getPathContent()
+          
+          onKeyDown={(k) => {
+            if(k.key === 'enter') {
+              getPathContent()
+            }
           }}
           prefix={
           <span style={{padding: '6px 10px'}} >Path：</span>
@@ -108,9 +114,8 @@ const Drives = (props: Props) => {
           onRow={(record, index) => {
             return {
               onClick() {
-                if(record.IsDir) {
-
-                  setCurrentPath(path.join(currentPath, record.Name) + '/')
+                if(record?.IsDir) {
+                  setPaths([...paths, record.Name])
                   setTimeout(() => {
                     getPathContent()
                   }, 0);
@@ -138,7 +143,14 @@ const Drives = (props: Props) => {
           },
           {
             title: 'Size',
-            dataIndex: 'Size'
+            dataIndex: 'Size',
+            render(v, record) {
+              if(!record.IsDir) {
+                return record.Size?.toLocaleString()
+              }
+              return <></>
+              
+            }
           },
           {
             title: 'Actions',
