@@ -10,11 +10,13 @@ export type ContentModel = {
   Path: string 
   Size: string
   Type: number
+  FileCategory: string
   Content?: string
   Hash: string
   MimeType?: string
+  Annotation?: string
   Unavailable?: number
-  Attrs?: AttrModel[]
+  // Attrs?: AttrModel[]
 } & ModelBase
 
 export type ContentType = {
@@ -36,25 +38,25 @@ export type AttrSchema = {
 
 }
 
-export type ContentAttr = {
-  ID: number
-  ContentId: number
-  Value: string
-  Label: string
-  Name: string
-  NumberValue: number
-  SchemaId: number
-  DataType: number
-}
+// export type ContentAttr = {
+//   ID: number
+//   ContentId: number
+//   Value: string
+//   Label: string
+//   Name: string
+//   NumberValue: number
+//   SchemaId: number
+//   DataType: number
+// }
 
-export type AttrModel = {
-  ID?: number
-  ContentId: number
-  Value?: string
-  NumberValue?: number
-  SchemaId?: number
-  SchemaInfo?: AttrSchema
-}
+// export type AttrModel = {
+//   ID?: number
+//   ContentId: number
+//   Value?: string
+//   NumberValue?: number
+//   SchemaId?: number
+//   SchemaInfo?: AttrSchema
+// }
 
 
 
