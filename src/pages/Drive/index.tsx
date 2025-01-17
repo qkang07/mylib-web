@@ -1,7 +1,7 @@
 import { Button, ButtonGroup, Divider, Input, List, Popover, Space, Table, Tag, TagInput } from '@douyinfe/semi-ui'
 import { IconBriefStroked, IconCheckCircleStroked, IconFile, IconFolder, IconPlus } from '@douyinfe/semi-icons'
 import { useRequest } from 'ahooks'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { api } from '../../api'
 import styles from './index.module.scss'
 import EditCard from '../../comps/EditCard'
@@ -21,11 +21,20 @@ export type PathInfo = {
 
 type Props = {}
 
+const getTableHeight = () => window.innerHeight - 124
+
 const Drives = (props: Props) => {
 
 
   const {os} = useContext(AppContext)
   const [path, setPath] = useState<string[]>([])
+  const [scroll, setScroll] = useState(() =>({y: getTableHeight()}) )
+
+  useEffect(() => {
+    window.addEventListener('resize', () => {
+      setScroll({y: getTableHeight()})
+    })
+  }, [])
 
   const {data, loading, runAsync: getPathContent} = useRequest<PathInfo[], [string[]] >((path: string[] = []) => {
     let pathStr = path.length ? path.join('/') + '/' : ''
@@ -58,6 +67,8 @@ const Drives = (props: Props) => {
     setPath(path)
     getPathContent(path)
   }
+
+  console.log(scroll)
 
   return (
     <div>
@@ -105,7 +116,9 @@ const Drives = (props: Props) => {
         <Table
           loading={loading}
           pagination={false}
-         size="small"
+          scroll={scroll}
+          size="small"
+          
           onRow={(record, index) => {
             return {
               onClick() {
@@ -131,7 +144,10 @@ const Drives = (props: Props) => {
           },
           {
             title: 'Name',
-            dataIndex: 'Name'
+            dataIndex: 'Name',
+            sorter(a, b) {
+              return (a?.Name || '') > (b?.Name || '') ? 1 : -1
+            },
           },
           {
             title: 'Size',
@@ -142,7 +158,17 @@ const Drives = (props: Props) => {
               }
               return <></>
               
-            }
+            },
+            sorter(a, b, order) {
+              if(a?.IsDir) {
+                return order === 'descend' ? -1 : 1
+              }
+              if(b?.IsDir ) {
+                return order === 'descend' ? 1 : -1
+              }
+              
+              return a!.Size! > b!.Size! ? 1 : -1
+            },
           },
           {
             title: 'Actions',

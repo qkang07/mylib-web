@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import styles from './index.module.scss'
-import { Button, Descriptions, Input, Popover, Select, Space, Table } from '@douyinfe/semi-ui'
+import { Button, Descriptions, Input, Popover, Select, Space, Table, TagInput } from '@douyinfe/semi-ui'
 import { ColumnProps } from '@douyinfe/semi-ui/lib/es/table'
 import EditCard from '../../comps/EditCard'
 import { useRequest } from 'ahooks'
@@ -21,6 +21,8 @@ const Search = (props: Props) => {
     Type: 'and',
     Children: []
   })
+
+  const [keyword, setKeyword] = useState('')
 
   const {data: result, loading, runAsync: doSearch} = useRequest(() => {
     return api.post<ContentModel[]>('/content/search', condition).then(res => res.data.data)
@@ -62,6 +64,9 @@ const Search = (props: Props) => {
 
   return (
     <div>
+      <div className={styles.searchInput}>
+     <Input value={keyword} onChange={v => setKeyword(v)} showClear/>
+      </div>
       <div className={styles.conditions}>
         <ConditionsEditor className={styles.editor} initConditions={condition} onChange={(cond) => setCondition(cond)}/>
         <Button type='primary' onClick={() => doSearch()} >Search</Button>
