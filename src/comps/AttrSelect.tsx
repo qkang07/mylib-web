@@ -8,7 +8,7 @@ import { useAttrSchemas } from '../common/useAttrSchemas'
 type Props = {
   value?: number
   removed?: (attr: AttrSchema) => boolean
-  onChange?: (value: number, attr: AttrSchema) => void
+  onChange?: (value: string, attr: AttrSchema) => void
 }
 
 const AttrSelect = (props: Props) => {
@@ -22,7 +22,7 @@ const AttrSelect = (props: Props) => {
     value={props.value} 
     onChange={v => {
       const attr = attrSchemas.find(a => a.ID === v)
-      props.onChange?.(v as number, attr!)
+      props.onChange?.(attr?.Name as string, attr!)
     }}
     optionList={attrSchemas?.map(attr => {
       return {

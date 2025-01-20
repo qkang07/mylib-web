@@ -57,9 +57,12 @@ const EditCard = (props: Props) => {
     debounceWait: 100
   })
 
-  const {runAsync: saveAttrs, loading: attrLoading} = useRequest(() => {
-    const newAttrs: AttrModel[] = formApi.current?.getValues().Attrs || []
+  const {runAsync: save, loading: attrLoading} = useRequest(() => {
+    const attrs: AttrModel[] = formApi.current?.getValues().Attrs || []
     const promises: Promise<void>[] = []
+    content?.Tags = attrs.map(attr => {
+      return attr.SchemaInfo?.Name + ':' + attr.Value
+    }).join('|')
     attrs.forEach(attr => {
       const na = newAttrs.find(a => a.ID === attr.ID)
       if(!na) {
@@ -154,7 +157,7 @@ const EditCard = (props: Props) => {
       </Form>
       <Space>
         <Button theme='solid' loading={attrLoading} onClick={() => {
-          saveAttrs()
+          save()
         }}  >保存</Button>
         <Button onClick={() => {
           props.onFinish?.()
