@@ -1,4 +1,4 @@
-import { ArrayField, Button, Descriptions, Form, Modal, Space } from '@douyinfe/semi-ui'
+import { ArrayField, Button, Descriptions, Form, Modal, Space, Toast } from '@douyinfe/semi-ui'
 import { IconCheckCircleStroked, IconFile, IconFolder, IconMinus, IconPlus } from '@douyinfe/semi-icons'
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
@@ -10,7 +10,7 @@ import styles from './index.module.scss'
 import { FormAttrSelect } from '../AttrSelect'
 
 type Props = {
-  content?: ContentModel
+  content: ContentModel
   onFinish?: (res?: ContentModel) => void
 }
 
@@ -21,81 +21,31 @@ const EditCard = (props: Props) => {
   const {content} = props
   const formApi = useRef<FormApi>() 
 
-  // useEffect(() => {
-    
-  //   setAttrs(content?.Attrs || [])
-  // }, [content?.Attrs])
-
-
-
-  // const [attrs, setAttrs] = useState<any[]>(content?.Attrs || [])
-
-  // const {runAsync: addContent, loading: addLoading, data: addRes} = useRequest<ContentModel, void[]>(() => {
-  //   return api.post('/content/add', content ).then(res => { 
-  //     formApi.current?.setValues({
-  //       Attrs: [
-  //         {
-  //           Name: '',
-  //           Value: ''
-  //         }
-  //       ]
-  //     })
-  //     return res.data 
-  //   })
-  // }, {
-  //   manual: true
-  // })
-
-  const {data: attrs = [], loading: getAttrLoading, mutate: mutateAttrs} = useRequest(() => {
-    return api.get<Partial<ContentAttr>[]>('/content/attrs', {
-      params: {
-        id: content?.ID
-      }
-    }).then(res => res.data || [])
-  }, {
-    refreshDeps: [content?.ID],
-    debounceWait: 100
-  })
 
   const {runAsync: save, loading: attrLoading} = useRequest(() => {
     const attrs: AttrModel[] = formApi.current?.getValues().Attrs || []
-    const promises: Promise<void>[] = []
-    content?.Tags = attrs.map(attr => {
+    content.Attrs = attrs.map(attr => {
       return attr.SchemaInfo?.Name + ':' + attr.Value
     }).join('|')
-    attrs.forEach(attr => {
-      const na = newAttrs.find(a => a.ID === attr.ID)
-      if(!na) {
-        promises.push(api.delete('/content/attr?id=' + attr.ID))
-      } else {
-
-        na.ContentId = content!.ID!
-        na.NumberValue = 0
-        promises.push(api.post('/content/attr', na))
-      }
-    })
-    Promise.all(promises).then(() => {
-      props.onFinish?.()
-    })
+    return api.post('content/attrs', content).then(res => res.data)
   }, {
-    manual: true
+    manual: true,
+    onSuccess(){
+      Toast.success('保存成功')
+    }
   })
 
   useEffect(() => {
+    const attrs = content.Attrs?.split('|').map(attr => {
+      const [name, value] = attr.split(':')
+      return {
+        Name: name,
+        Value: value
+      }
+    }) || []
     formApi.current?.setValue('Attrs', attrs)
-  },[attrs])
+  },[content.Attrs])
 
-  // const addAttr = (index: number) => {
-  //   attrs.splice(index, 0 ,  {
-  //     ContentId: content!.ID as number
-  //   })
-  //   mutateAttrs([...attrs])
-  // }
-
-  // const removeAttr = (index: number) => {
-  //   attrs.splice(index, 1)
-  //   mutateAttrs([...attrs])
-  // }
 
   const checkExistAttr = (attr: AttrSchema) => {
 
@@ -112,28 +62,14 @@ const EditCard = (props: Props) => {
         Attrs: []
       }}>
         <Form.Slot label="Name" >
-          {content?.Name}
+          {content.Name}
         </Form.Slot>
         <Form.Slot label="Path" >
-          {content?.Path}
+          {content.Path}
         </Form.Slot>
         <Form.Slot label="Size">
-          {content?.Size}
+          {content.Size}
         </Form.Slot>
-        {/* {
-          attrs.map((attr, index) => {
-            return <Space key={index} style={{display: 'flex'}}>
-              
-              <FormAttrSelect field={`Attrs[${index}].SchemaId`} />
-              <Form.Input field={`Attrs[${index}].Value`} />
-              <Button circle icon={<IconPlus/> } theme='borderless' onClick={() => addAttr(index + 1)} ></Button>
-              <Button disabled={attrs.length <= 1} circle icon={<IconMinus/> } theme='borderless' onClick={() => removeAttr(index)} ></Button>
-            </Space>
-          })
-        } */}
-        {/* <div>
-          <Button icon={<IconPlus/>} onClick={() => addAttr(0)}>添加</Button>
-        </div> */}
         <ArrayField field='Attrs'>
           {({arrayFields, add}) => {
             

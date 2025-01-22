@@ -16,8 +16,7 @@ export type ContentModel = {
   MimeType?: string
   Annotation?: string
   Unavailable?: number
-  Tags?: string
-  // Attrs?: AttrModel[]
+  Attrs?: string
 } & ModelBase
 
 export type ContentType = {

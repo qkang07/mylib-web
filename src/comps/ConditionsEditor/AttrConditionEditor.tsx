@@ -1,7 +1,7 @@
 import { Button, Input, InputNumber, Popover, Select, Space } from '@douyinfe/semi-ui'
 import React, { useState } from 'react'
 import AttrSelect from '../AttrSelect'
-import { AttrSchema, ConditionOperator, ContentAttr, DirectCondition, OperatorTypes } from '../../types/content'
+import { AttrSchema, ConditionOperator, DirectCondition, OperatorTypes } from '../../types/content'
 import { IconClose } from '@douyinfe/semi-icons'
 
 type Props = {
@@ -51,13 +51,17 @@ const AttrConditionEditor = (props: Props) => {
             setCond({...cond})
           }}
         ></Select>
-        {attr?.DataType === 1 ? <InputNumber value={cond.Values?.[0]} onChange={v => {
+        {/* {attr?.DataType === 1 ? <InputNumber value={cond.Values?.[0]} onChange={v => {
           cond.Values = [v]
           setCond({...cond})
         }}/> : <Input value={cond.Values?.[0]} onChange={v => {
           cond.Values = [v]
           setCond({...cond})
-        }} />}
+        }} />} */}
+        <Input value={cond.Values?.[0]} onChange={v => {
+          cond.Values = [v]
+          setCond({...cond})
+        }} />
       </Space>
     </div>}>
       <Button style={{ display: 'inline-flex', justifyContent:'space-between'}} >
