@@ -54,7 +54,7 @@ const Drives = (props: Props) => {
             Path: item
           }
         } else {
-          item.Path = path + item.Name
+          item.Path = pathStr + item.Name
           return item
         }
       })
