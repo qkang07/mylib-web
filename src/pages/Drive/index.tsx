@@ -1,13 +1,14 @@
 import { Button, ButtonGroup, Divider, Input, List, Popover, Space, Table, Tag, TagInput } from '@douyinfe/semi-ui'
 import { IconBriefStroked, IconCheckCircleStroked, IconFile, IconFolder, IconPlus } from '@douyinfe/semi-icons'
 import { useRequest } from 'ahooks'
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { api } from '../../api'
 import styles from './index.module.scss'
 import EditCard from '../../comps/EditCard'
 import path from 'path-browserify'
 import RawFileAction from './RawFileAction'
 import { AppContext } from '../../App'
+import { useSearchParams } from 'react-router-dom'
 
 
 export type PathInfo = {
@@ -27,8 +28,15 @@ const Drives = (props: Props) => {
 
 
   const {os} = useContext(AppContext)
-  const [path, setPath] = useState<string[]>([])
   const [scroll, setScroll] = useState(() =>({y: getTableHeight()}) )
+  const [params, setParams] = useSearchParams({
+    path: ''
+  })
+
+  const paths = useMemo(() => {
+    const pathStr = params.get('path') || ''
+    return pathStr.split('/') || []
+  }, [params])
 
   useEffect(() => {
     window.addEventListener('resize', () => {
@@ -64,7 +72,9 @@ const Drives = (props: Props) => {
   })
 
   const refreshPath = (path: string[]) => {
-    setPath(path)
+    setParams({
+      path: path.join('/')
+    })
     getPathContent(path)
   }
 
@@ -73,18 +83,19 @@ const Drives = (props: Props) => {
   return (
     <div>
       <div>
-        <TagInput value={path}
+        <TagInput value={paths}
           draggable={false}
           renderTagItem={(v, i, onClose)=> {
             return <>
             {i === 0 && os !== 'windows' && <Divider margin={4} style={{borderColor: '#ccc', borderWidth: 1.5, transform: 'rotate(15deg)'}} layout='vertical' />} 
             <Button theme='borderless' type='tertiary' style={{paddingLeft: 4, paddingRight: 4}} size='small' onClick={() => {
-              refreshPath(path.slice(0, i + 1))
+              refreshPath(paths.slice(0, i + 1))
             }} >{v}</Button>
             <Divider margin={4} style={{borderColor: '#ccc', borderWidth: 1.5, transform: 'rotate(15deg)'}} layout='vertical' />
             </> 
           }}
           onChange={v => {
+            
             setPath(v)
           }}
           
