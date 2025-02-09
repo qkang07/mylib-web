@@ -5,32 +5,48 @@ export type ModelBase = {
   DeletedAt?: string
 }
 
+// 文件系统的模型
+export interface FSContent  {
+  Name: string
+  IsDir: boolean
+  Size?: number
+  Exist?: boolean
+  Path?: string
+  // 如果是已存在的内容，会有 contentid
+  ContentId?: number
+}
+
+export type ContentType = 'text' | 'file' | 'collection' | 'link' | 'empty'
+
+export type ContentCategory =  'text' | 'image' |'video' |'audio' |'doc' | 'pkg'|'install' | 'code' |'exe' |'unknown'
+
 export type ContentModel = {
   Name: string
-  Path: string 
-  Size: string
-  Type: string
-  Category: string
+  Path?: string 
+  Size?: string
+  Type?: ContentType
+  Category?: ContentCategory
   Content?: string
-  Hash: string
+  Hash?: string
   MimeType?: string
   Annotation?: string
   Unavailable?: number
   Attrs?: string
 } & ModelBase
 
-export type ContentType = {
-  Name: string
-  MimeType?: string
-  Ext?: string
-  // BaseType?: number
-  Attrs: string
-} & ModelBase
+// export type ContentType = {
+//   Name: string
+//   MimeType?: string
+//   Ext?: string
+//   // BaseType?: number
+//   Attrs: string
+// } & ModelBase
 
 export type AttrSchema = {
   ID: number
   Name: string
   Label?: string
+
   Config?: string
   // RefColl: number
   // RefCollProp: string
@@ -40,21 +56,12 @@ export type AttrSchema = {
 export type ContentAttr = {
   ID: number
   ContentId: number
-  Value: string
   Label: string
   Name: string
-  NumberValue: number
+  StrValue: string
+  NumValue: number
   SchemaId: number
-  DataType: number
-}
-
-export type AttrModel = {
-  ID?: number
-  ContentId: number
-  Value?: string
-  NumberValue?: number
-  SchemaId?: number
-  SchemaInfo?: AttrSchema
+  Type: number
 }
 
 

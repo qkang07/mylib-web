@@ -5,8 +5,8 @@ import { useAttrSchemas } from '../common/useAttrSchemas'
 
 type Props = {
   value?: string
-  removed?: (attr: AttrSchema) => boolean
-  onChange?: (value: string, attr: AttrSchema) => void
+  removed?: (attr: string) => boolean
+  onChange?: (value: string) => void
 }
 
 const AttrSelect = (props: Props) => {
@@ -17,16 +17,16 @@ const AttrSelect = (props: Props) => {
   const {attrSchemas, loading} = useAttrSchemas()
   return (
     <Select style={{minWidth:60}} loading={loading} 
+    allowCreate
     value={props.value} 
     onChange={v => {
-      const attr = attrSchemas.find(a => a.ID === v)
-      props.onChange?.(attr?.Name as string, attr!)
+      props.onChange?.(v as string)
     }}
     optionList={attrSchemas?.map(attr => {
       return {
         label: attr.Label || attr.Name,
         value: attr.Name,
-        disabled: attr.Name !== props.value && props.removed?.(attr)
+        disabled: attr.Name !== props.value && props.removed?.(attr.Name)
       }
     })} ></Select>
   )

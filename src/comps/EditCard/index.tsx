@@ -2,7 +2,7 @@ import { ArrayField, Button, Descriptions, Form, Modal, Space, Toast } from '@do
 import { IconCheckCircleStroked, IconFile, IconFolder, IconMinus, IconPlus } from '@douyinfe/semi-icons'
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { AttrModel, AttrSchema, ContentAttr, ContentModel } from '../../types/content'
+import { AttrSchema, ContentAttr, ContentModel } from '../../types/content'
 import { useRequest } from 'ahooks'
 import { api } from '../../api'
 import { FormApi } from '@douyinfe/semi-ui/lib/es/form'
@@ -23,9 +23,9 @@ const EditCard = (props: Props) => {
 
 
   const {runAsync: save, loading: attrLoading} = useRequest(() => {
-    const attrs: AttrModel[] = formApi.current?.getValues().Attrs || []
+    const attrs: ContentAttr[] = formApi.current?.getValues().Attrs || []
     content.Attrs = attrs.map(attr => {
-      return attr.SchemaInfo?.Name + ':' + attr.Value
+      return attr?.Name + ':' + attr?.StrValue || attr.NumValue
     }).join('|')
     return api.post('content/attrs', content).then(res => res.data)
   }, {
@@ -47,10 +47,10 @@ const EditCard = (props: Props) => {
   },[content.Attrs])
 
 
-  const checkExistAttr = (attr: AttrSchema) => {
+  const checkExistAttr = (attr: string) => {
 
     const attrs: ContentAttr[] = formApi.current?.getValue("Attrs")
-    return attrs.some(a => a.SchemaId === attr.ID)
+    return attrs.some(a => a.Name === attr)
   }
 
 
@@ -76,7 +76,7 @@ const EditCard = (props: Props) => {
             return arrayFields.map(item => {
               return <Space key={item.key} style={{display: 'flex'}}>
               {/* <Form.Input field={`Attrs[${index}].AttrName`} /> */}
-              <FormAttrSelect label="Attribute" field={`${item.field}.SchemaId`} removed={checkExistAttr} />
+              <FormAttrSelect label="Attribute" field={`${item.field}.Name`} removed={checkExistAttr} />
               <Form.Input label="Value" field={`${item.field}.Value`} />
               <Button circle icon={<IconPlus/> } theme='borderless' onClick={() => add()} ></Button>
               <Button disabled={arrayFields.length <= 1} circle icon={<IconMinus/> } theme='borderless' onClick={() => item.remove()} ></Button>
