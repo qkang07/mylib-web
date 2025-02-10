@@ -54,14 +54,14 @@ export type AttrSchema = {
 }
 
 export type ContentAttr = {
-  ID: number
-  ContentId: number
-  Label: string
-  Name: string
-  StrValue: string
-  NumValue: number
-  SchemaId: number
-  Type: number
+  ID?: number
+  ContentId?: number
+  Label?: string
+  Name?: string
+  StrValue?: string
+  NumValue?: number
+  SchemaId?: number
+  Type?: number
 }
 
 

@@ -21,6 +21,33 @@ const EditCard = (props: Props) => {
   const {content} = props
   const formApi = useRef<FormApi>() 
 
+  const {data: attrs, loading: attrsLoading, runAsync: getAllAttrs} = useRequest(() => {
+    return api.get('/content/attrs?id=' + content.ID).then(res => {
+      if(res.data instanceof Array) {
+        const attrs = res.data as ContentAttr[]
+        if(!attrs.length) {
+          attrs.push({
+            Name:'',
+            StrValue: '',
+            Type: 1,
+            ContentId: content.ID!
+          })
+        }
+        formApi.current?.setValue('Attrs', attrs)
+        return res.data
+      }
+      return []
+    })
+  },{
+    manual: true,
+    throttleWait: 500
+  })
+
+  useEffect(() => {
+    if(content.ID) {
+      getAllAttrs()
+    }
+  },[content.ID])
 
   const {runAsync: save, loading: attrLoading} = useRequest(() => {
     const attrs: ContentAttr[] = formApi.current?.getValues().Attrs || []
@@ -35,16 +62,16 @@ const EditCard = (props: Props) => {
     }
   })
 
-  useEffect(() => {
-    const attrs = content.Attrs?.split('|').map(attr => {
-      const [name, value] = attr.split(':')
-      return {
-        Name: name,
-        Value: value
-      }
-    }) || []
-    formApi.current?.setValue('Attrs', attrs)
-  },[content.Attrs])
+  // useEffect(() => {
+  //   const attrs = content.Attrs?.split('|').map(attr => {
+  //     const [name, value] = attr.split(':')
+  //     return {
+  //       Name: name,
+  //       Value: value
+  //     }
+  //   }) || []
+  //   formApi.current?.setValue('Attrs', attrs)
+  // },[content.Attrs])
 
 
   const checkExistAttr = (attr: string) => {
@@ -75,9 +102,9 @@ const EditCard = (props: Props) => {
             
             return arrayFields.map(item => {
               return <Space key={item.key} style={{display: 'flex'}}>
-              {/* <Form.Input field={`Attrs[${index}].AttrName`} /> */}
-              <FormAttrSelect label="Attribute" field={`${item.field}.Name`} removed={checkExistAttr} />
-              <Form.Input label="Value" field={`${item.field}.Value`} />
+              <Form.Input field={`${item.field}.Name`} />
+              {/* <FormAttrSelect label="Attribute" field={`${item.field}.Name`} removed={checkExistAttr} /> */}
+              <Form.Input label="Value" field={`${item.field}.StrValue`} />
               <Button circle icon={<IconPlus/> } theme='borderless' onClick={() => add()} ></Button>
               <Button disabled={arrayFields.length <= 1} circle icon={<IconMinus/> } theme='borderless' onClick={() => item.remove()} ></Button>
             </Space>
