@@ -1,4 +1,4 @@
-import { ArrayField, Button, Descriptions, Form, Modal, Space, Toast } from '@douyinfe/semi-ui'
+import { ArrayField, Button, Descriptions, Form, Input, Modal, Popconfirm, Space, Spin, Toast } from '@douyinfe/semi-ui'
 import { IconCheckCircleStroked, IconFile, IconFolder, IconMinus, IconPlus } from '@douyinfe/semi-icons'
 
 import React, { useEffect, useMemo, useRef, useState } from 'react'
@@ -8,6 +8,7 @@ import { api } from '../../api'
 import { FormApi } from '@douyinfe/semi-ui/lib/es/form'
 import styles from './index.module.scss'
 import { FormAttrSelect } from '../AttrSelect'
+import AttrEditor from '../AttrEditor'
 
 type Props = {
   content: ContentModel
@@ -21,7 +22,7 @@ const EditCard = (props: Props) => {
   const {content} = props
   const formApi = useRef<FormApi>() 
 
-  const {data: attrs, loading: attrsLoading, runAsync: getAllAttrs} = useRequest(() => {
+  const {data: attrs = [], loading: attrsLoading, runAsync: getAllAttrs, mutate: mutateAttrs} = useRequest(() => {
     return api.get('/content/attrs?id=' + content.ID).then(res => {
       if(res.data instanceof Array) {
         const attrs = res.data as ContentAttr[]
@@ -62,6 +63,7 @@ const EditCard = (props: Props) => {
     }
   })
 
+
   // useEffect(() => {
   //   const attrs = content.Attrs?.split('|').map(attr => {
   //     const [name, value] = attr.split(':')
@@ -74,16 +76,61 @@ const EditCard = (props: Props) => {
   // },[content.Attrs])
 
 
-  const checkExistAttr = (attr: string) => {
+  // const checkExistAttr = (attr: string) => {
 
-    const attrs: ContentAttr[] = formApi.current?.getValue("Attrs")
-    return attrs.some(a => a.Name === attr)
-  }
+  //   const attrs: ContentAttr[] = formApi.current?.getValue("Attrs")
+  //   return attrs.some(a => a.Name === attr)
+  // }
 
 
   return (
     <div className={styles.editCard}>
-      <Form getFormApi={fapi => {
+      <Descriptions data={[
+        {
+          key: 'Name',
+          value: content.Name
+        },
+        {
+          key:'Path',
+          value: content.Path,
+        },
+        {
+          key: 'Size',
+          value: content.Size
+        }
+      ]} >
+
+      </Descriptions>
+      <div className={styles.attrs}>
+        <Spin spinning={attrLoading}>
+
+          {
+            attrs?.map((attr, index) => {
+              return <div key={index} style={{marginTop: 8}}>
+                <AttrEditor attr={attr}
+              onRemove={() => {
+                attrs.splice(index, 1)
+                mutateAttrs([...attrs])
+              }}
+              />
+              </div>
+            })
+          }
+          <div style={{marginTop: 8}}>
+            <Button size='small' icon={<IconPlus/>} block onClick={() => {
+              const attr: ContentAttr = {
+                Name:'',
+                StrValue: '',
+                Type: 1,
+                ContentId: content.ID!
+              }
+              attrs.push(attr)
+              mutateAttrs([...attrs])
+            }} ></Button>
+          </div>
+        </Spin>
+      </div>
+      {/* <Form getFormApi={fapi => {
         formApi.current = fapi
       }} allowEmpty initValues={{
         Attrs: []
@@ -102,26 +149,23 @@ const EditCard = (props: Props) => {
             
             return arrayFields.map(item => {
               return <Space key={item.key} style={{display: 'flex'}}>
-              <Form.Input field={`${item.field}.Name`} />
-              {/* <FormAttrSelect label="Attribute" field={`${item.field}.Name`} removed={checkExistAttr} /> */}
+              <FormAttrSelect label="Attribute" field={`${item.field}.Name`} removed={checkExistAttr} />
               <Form.Input label="Value" field={`${item.field}.StrValue`} />
               <Button circle icon={<IconPlus/> } theme='borderless' onClick={() => add()} ></Button>
-              <Button disabled={arrayFields.length <= 1} circle icon={<IconMinus/> } theme='borderless' onClick={() => item.remove()} ></Button>
+              <Popconfirm onConfirm={() => {
+
+              }}>
+                <Button disabled={arrayFields.length <= 1} circle icon={<IconMinus/> } theme='borderless' onClick={() => item.remove()} ></Button>
+              </Popconfirm>
             </Space>
-              // return <Space key={item.key}>
-              //   <Form.Input field={`${item.field}.Name`} placeholder={'Attr Name'} ></Form.Input>
-              //   <Form.Input field={`${item.field}.Value`} placeholder={'Value'} ></Form.Input>
-              //   <Button circle icon={<IconPlus/> } theme='borderless' onClick={() => add()} ></Button>
-              //   <Button disabled={arrayFields.length <= 1} circle icon={<IconMinus/> } theme='borderless' onClick={() => item.remove()} ></Button>
-              // </Space>
             })
           }}
         </ArrayField>
-      </Form>
-      <Space>
-        <Button theme='solid' loading={attrLoading} onClick={() => {
+      </Form> */}
+      <Space style={{marginTop: 8}}>
+        {/* <Button theme='solid' loading={attrLoading} onClick={() => {
           save()
-        }}  >保存</Button>
+        }}  >保存</Button> */}
         <Button onClick={() => {
           props.onFinish?.()
         }}>完成</Button>

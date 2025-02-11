@@ -23,7 +23,7 @@ function App() {
 
   return (
     <>
-    <AppContext.Provider value={{os: sysInfo.os}}>
+    <AppContext.Provider value={{os: sysInfo?.os}}>
       <div className='site-nav'>
         <Space>
           <Typography.Text link={{href: '/drives'}}>
