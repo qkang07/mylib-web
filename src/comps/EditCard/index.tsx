@@ -45,10 +45,15 @@ const EditCard = (props: Props) => {
   })
 
   useEffect(() => {
+    console.log('each time', content.ID)
     if(content.ID) {
       getAllAttrs()
     }
   },[content.ID])
+  useEffect(() => {
+    console.log('edit card init')
+  }, [])
+
 
   const {runAsync: save, loading: attrLoading} = useRequest(() => {
     const attrs: ContentAttr[] = formApi.current?.getValues().Attrs || []

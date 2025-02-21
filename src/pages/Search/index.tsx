@@ -1,14 +1,12 @@
 import React, { useRef, useState } from 'react'
 import styles from './index.module.scss'
-import { Button, Descriptions, Input, Popover, Select, Space, Table, TagInput } from '@douyinfe/semi-ui'
-import { ColumnProps } from '@douyinfe/semi-ui/lib/es/table'
+import { Button, Descriptions, Input, Popover, Space, Table } from 'antd'
 import EditCard from '../../comps/EditCard'
 import { useRequest } from 'ahooks'
 import { api } from '../../api'
 import { CollectionNode, ConditionCollection, ContentModel } from '../../types/content'
-import { Form, FormApi } from '@douyinfe/semi-ui/lib/es/form'
-import { IconClose, IconPlus } from '@douyinfe/semi-icons'
 import ConditionsEditor from '../../comps/ConditionsEditor'
+import { ColumnsType } from 'antd/es/table'
 
 
 
@@ -30,9 +28,9 @@ const Search = (props: Props) => {
     manual: true
   })
 
-  const columns: ColumnProps[] = [
+  const columns: ColumnsType<ContentModel>[] = [
     {
-      title: 'Name',
+      title : 'Name',
       dataIndex: 'Name'
     },
     {
@@ -65,7 +63,7 @@ const Search = (props: Props) => {
   return (
     <div>
       <div className={styles.searchInput}>
-     <Input value={keyword} onChange={v => setKeyword(v)} showClear/>
+     <Input value={keyword} onChange={v => setKeyword(v)} allowClear/>
       </div>
       <div className={styles.conditions}>
         <ConditionsEditor className={styles.editor} initConditions={condition} onChange={(cond) => setCondition(cond)}/>

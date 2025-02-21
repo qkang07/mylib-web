@@ -1,4 +1,4 @@
-import { Button, Input, InputNumber, Popover, Select, Space } from '@douyinfe/semi-ui'
+import { Button, Input, Popover, Select, Space } from 'antd'
 import React, { useState } from 'react'
 import AttrSelect from '../AttrSelect'
 import { AttrSchema, ConditionOperator, DirectCondition, OperatorTypes } from '../../types/content'
@@ -30,7 +30,7 @@ const AttrConditionEditor = (props: Props) => {
 
   const label = cond.Attr && cond.Operator && cond.Values?.length ? `${attr?.Label || ''} ${cond.Operator || ''} ${cond.Values?.[0] || ''}` : '请设置'
   return (
-    <Popover position='bottomLeft' onVisibleChange={onVisibleChange} trigger='click' content={<div style={{padding: 10}}>
+    <Popover placement='bottomLeft' onVisibleChange={onVisibleChange} trigger='click' content={<div style={{padding: 10}}>
       <Space>
         <AttrSelect value={cond?.Attr} onChange={(id, a) => {
           setAttr(a)
@@ -40,7 +40,7 @@ const AttrConditionEditor = (props: Props) => {
           })
         }
       }/>
-        <Select showArrow={false} style={{minWidth: 80}} dropdownMatchSelectWidth value={cond.Operator} optionList={OperatorTypes.map(op => {
+        <Select showArrow={false} style={{minWidth: 80}} dropdownMatchSelectWidth value={cond.Operator} options={OperatorTypes.map(op => {
           return {
             value: op,
             label: op
@@ -67,7 +67,7 @@ const AttrConditionEditor = (props: Props) => {
       <Button style={{ display: 'inline-flex', justifyContent:'space-between'}} >
         <span> {label}</span>
        
-        <Button size='small' icon={<IconClose/>} theme='borderless' onClickCapture={e => {
+        <Button size='small' icon={<IconClose/>} type="text" onClickCapture={e => {
           e.stopPropagation()
           props.onRemove?.()
         }} ></Button>

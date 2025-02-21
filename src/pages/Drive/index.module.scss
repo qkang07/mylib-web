@@ -1,0 +1,10 @@
+.content-table {
+  display: flex;
+  width: 100vw;
+  &:first-child {
+    flex: 1;
+  }
+  .content-detail {
+    width: 360px;
+  }
+}

@@ -2,9 +2,7 @@ import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'rea
 import { ConditionCollection, DirectCondition } from '../../types/content'
 import styles from './index.module.scss'
 import { IconPlus } from '@douyinfe/semi-icons'
-import { Button, Popover, Select, Space, Tag } from '@douyinfe/semi-ui'
-import AttrSelect from '../AttrSelect'
-import { Input } from '@douyinfe/semi-ui/lib/es/input'
+import { Button, Space} from 'antd'
 import AttrConditionEditor from './AttrConditionEditor'
 
 type Props = {

@@ -1,7 +1,7 @@
 import React from 'react'
 import styles from './index.module.scss'
 import { ContentModel } from '../../types/content'
-import { Button, Space, Tag } from '@douyinfe/semi-ui'
+import { Button, Space, Tag } from 'antd'
 import { useRequest } from 'ahooks'
 
 

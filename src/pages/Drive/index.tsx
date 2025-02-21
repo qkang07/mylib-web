@@ -1,14 +1,15 @@
-import { Button, ButtonGroup, Divider, Input, List, Popover, Space, Table, Tag, TagInput } from '@douyinfe/semi-ui'
+import { Button, Divider, Space, Table } from 'antd'
 import { IconBriefStroked, IconCheckCircleStroked, IconFile, IconFolder, IconPlus } from '@douyinfe/semi-icons'
 import { useRequest } from 'ahooks'
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { api } from '../../api'
 import styles from './index.module.scss'
 import EditCard from '../../comps/EditCard'
 import RawFileAction from './RawFileAction'
 import { AppContext } from '../../App'
 import { useSearchParams } from 'react-router-dom'
-import { FSContent } from '../../types/content'
+import { ContentModel, FSContent } from '../../types/content'
+import { TagInput } from '@douyinfe/semi-ui'
 
 
 
@@ -25,6 +26,8 @@ const Drives = (props: Props) => {
   const [params, setParams] = useSearchParams({
     path: ''
   })
+
+  const [currentContent,setCurrentContent] = useState<ContentModel>()
 
   const [pathArr, setPathArr] = useState<string[]>([])
 
@@ -77,7 +80,6 @@ const Drives = (props: Props) => {
     getPathContent(paths)
   }
 
-  console.log(scroll)
 
   return (
     <div>
@@ -112,7 +114,7 @@ const Drives = (props: Props) => {
           }}>Go</Button>
         } />
       </div>
-      <div className={styles.pathList}>
+      <div className={styles.contentTable}>
         {/* {data?.map(item => {
           return <div key={item.Name} className={styles.pathItem}>
             <div>{item.Name}</div>
@@ -184,12 +186,17 @@ const Drives = (props: Props) => {
             title: 'Actions',
             render(_, record, index) {
               return <Space>
-                <RawFileAction fsContent={record}  />
+                <RawFileAction onSelect={(content) => setCurrentContent(content)} fsContent={record}  />
               </Space>
             }
           }
         ]}  ></Table>
-      
+        {currentContent && <div className={styles.contentDetail}>
+          <EditCard content={currentContent} onFinish={() => {
+            setCurrentContent(undefined)
+          }} />
+          </div>}
+        <div></div>
       </div>
     </div>
   )

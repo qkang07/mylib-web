@@ -1,6 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 import { AttrSchema } from '../../types/content'
-import { Button, Form, Modal, Space, Spin } from '@douyinfe/semi-ui'
+import { Button, Form, Input, Radio, Space, Spin } from 'antd'
 import { FormApi } from '@douyinfe/semi-ui/lib/es/form'
 import { useRequest } from 'ahooks'
 import { api } from '../../api'
@@ -13,6 +13,7 @@ type Props = {
 const AttrSchemaEditor = (props: Props) => {
 
   const formApi = useRef<FormApi>() 
+  const [form] = Form.useForm()
 
   useEffect(() => {
     if(props.attr) {
@@ -35,16 +36,22 @@ const AttrSchemaEditor = (props: Props) => {
     <div>
       <Spin spinning={createLoading}>
 
-        <Form getFormApi={fapi => {
-          formApi.current = fapi
-        }}>
-          <Form.Input label="Name" field='Name' />
-          <Form.Input label="Label" field='Label' />
-          <Form.RadioGroup field='DataType'>
-            <Form.Radio value={2} >字符串</Form.Radio>
-            <Form.Radio value={1} >数字</Form.Radio>
-          </Form.RadioGroup>
-          <Form.TextArea field='Config'></Form.TextArea>
+        <Form form={form} >
+          <Form.Item label="Name" name='Name' >
+            <Input/>
+          </Form.Item>
+          <Form.Item label="Label" name='Label' >
+            <Input/>
+          </Form.Item>
+          <Form.Item name={'DataType'}>
+            <Radio.Group >
+              <Radio value={2} >字符串</Radio>
+              <Radio value={1} >数字</Radio>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item name={'Config'}>
+            <Input.TextArea></Input.TextArea>
+          </Form.Item>
         </Form>
         <Space>
           <Button onClick={() => {

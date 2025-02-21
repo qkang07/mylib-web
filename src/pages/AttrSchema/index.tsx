@@ -1,4 +1,4 @@
-import { Button, Modal, Popconfirm, Space, Table, Toast } from '@douyinfe/semi-ui'
+import { Button, message, Modal, Popconfirm, Space, Table } from 'antd'
 import { useRequest } from 'ahooks'
 import React, { useState } from 'react'
 import { api } from '../../api'
@@ -22,7 +22,7 @@ const AttrSchemaList = (props: Props) => {
   }, {
     manual: true,
     onSuccess(){
-      Toast.success('删除成功')
+      message.success('删除成功')
       loadSchemas()
     }
   })
@@ -73,7 +73,7 @@ const AttrSchemaList = (props: Props) => {
                   setCurrentSchema(item)
                   setEditVisible(true)
                 }} >编辑</Button>
-                <Popconfirm onConfirm={() => {
+                <Popconfirm title="?" onConfirm={() => {
                     delSchema(item.ID)
 
                 }}>
@@ -85,7 +85,6 @@ const AttrSchemaList = (props: Props) => {
         ]}
       ></Table>
       <Modal footer={null} visible={editVisible}  onCancel={() =>setEditVisible(false)} 
-        lazyRender
         >
           <AttrSchemaEditor attr={currentSchema} onChange={() => {
             loadSchemas()

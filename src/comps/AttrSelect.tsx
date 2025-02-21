@@ -1,6 +1,5 @@
 import { Select, withField } from '@douyinfe/semi-ui'
 import React from 'react'
-import { AttrSchema } from '../types/content'
 import { useAttrSchemas } from '../common/useAttrSchemas'
 
 type Props = {
